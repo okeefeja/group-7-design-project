@@ -1,3 +1,9 @@
+-- Drop the database if it exists
+DROP DATABASE IF EXISTS fitness_app;
+
+-- Create the database
+CREATE DATABASE fitness_app;
+
 -- Use the database for the fitness app
 USE fitness_app;
 
