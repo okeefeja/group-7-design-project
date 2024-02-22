@@ -17,8 +17,8 @@ import os
 
 #you need to set environment variable DATABASE_URL
 #with format mysql+pymysql://root:password@127.0.0.1/fitness_app
-if not os.getenv("DATABASE_URL"):
-    raise RuntimeError("DATABASE_URL is not set")
+# if not os.getenv("DATABASE_URL"):
+#     raise RuntimeError("DATABASE_URL is not set")
 
 
 # this variable, db, will be used for all SQLAlchemy commands
@@ -51,27 +51,26 @@ class Muscle(db.Model):
     body_part_id = db.Column(db.Integer, db.ForeignKey('body_parts.id'))
     body_part = db.relationship("BodyPart", backref=db.backref("body_parts", uselist=False))
 
+class WorkoutProgram(db.Model):
+    __tablename__ = 'workout_programs'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+    description = db.Column(db.String)
+    # Define the relationship to Exercise
+    exercises = db.relationship('Exercise', secondary='exercises_workout_program', back_populates='workout_programs')
 
 class Exercise(db.Model):
     __tablename__ = 'exercises'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String(50))
     description = db.Column(db.String)
-
-
-class WorkoutProgram(db.Model):
-    __tablename__ = 'workout_programs'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    description = db.Column(db.String)
+    # Define the relationship back to WorkoutProgram
+    workout_programs = db.relationship('WorkoutProgram', secondary='exercises_workout_program', back_populates='exercises')
 
 class ExercisesToWorkoutPrograms(db.Model):
-    __tablename__ = 'exercises-workout_programs'
-    program_id = db.Column(db.Integer, db.ForeignKey('workout_programs.id'), primary_key=True)
-    program = db.relationship("WorkoutProgram", backref=db.backref("workout_programs", uselist=False))
+    __tablename__ = 'exercises_workout_program'
+    workout_program_id = db.Column(db.Integer, db.ForeignKey('workout_programs.id'), primary_key=True)
     exercise_id = db.Column(db.Integer, db.ForeignKey('exercises.id'), primary_key=True)
-    exercise = db.relationship("Exercise", backref=db.backref("exercises", uselist=False))
-
 
 
 class MusclesToExercises(db.Model):
@@ -80,6 +79,12 @@ class MusclesToExercises(db.Model):
     muscle = db.relationship("Muscle", backref=db.backref("muscles", uselist=False))
     #exercise_id = db.Column(db.Integer, db.ForeignKey('exercises.id'), primary_key=True)
     #exercise = db.relationship("Exercise", backref=db.backref("exercises", uselist=False))
+
+exercises_workout_program = db.Table('exercises_workout_program',
+    db.Column('workout_program_id', db.Integer, db.ForeignKey('workout_programs.id'), primary_key=True),
+    db.Column('exercise_id', db.Integer, db.ForeignKey('exercises.id'), primary_key=True),
+    extend_existing=True
+)
 
 
 @app.route('/')
@@ -153,6 +158,35 @@ def get_exercise():
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
 
+
+@app.route('/workout_programs')
+@cross_origin(origin="*")
+def get_workout_programs():
+    workout_programs = WorkoutProgram.query.all()
+    programs_list = []
+
+    for program in workout_programs:
+        print(program);
+        exercises_list = []
+        for exercise in program.exercises:
+            
+            # Assuming each exercise has a 'muscles' relationship
+            #muscle_names = [muscle.name for muscle in exercise.muscles]
+            exercises_list.append({
+                'name': exercise.name,
+                'description': exercise.description,
+                #'muscles': muscle_names  # Add this line to include muscle groups
+            })
+
+        programs_list.append({
+            'id': program.id,
+            'name': program.name,
+            'description': program.description,
+            'exercises': exercises_list
+        })
+
+    return jsonify(programs_list)
+
 @app.route('/dev')
 @cross_origin(origin="*")
 def get_dummy():
@@ -165,3 +199,4 @@ def get_dummy():
     
 if __name__ == '__main__':
         app.run(debug=True)
+
