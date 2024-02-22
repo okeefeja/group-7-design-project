@@ -70,7 +70,6 @@ class WorkoutProgram(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     exercise_id = db.Column(db.Integer)
-#routes
 
 @app.route('/')
 def index():
@@ -83,6 +82,60 @@ def index():
             muscle_text += '<li>' + muscle.name + '</li>'
         muscle_text += '</ul>'
         return muscle_text
+    except Exception as e:
+        # e holds description of the error
+        error_text = "<p>The error:<br>" + str(e) + "</p>"
+        hed = '<h1>Something is broken.</h1>'
+        return hed + error_text
+    
+@app.route('/bodyTest')
+@cross_origin(origin="*")
+def get_body_part():
+
+    try:
+        bodyParts = db.session.execute(db.select(BodyPart)
+            .order_by(BodyPart.name)).scalars()
+
+        bodypart_text = []
+        for part in bodyParts:
+            bodypart_text.append({"name": part.name})
+        return jsonify(bodypart_text)
+    except Exception as e:
+        # e holds description of the error
+        error_text = "<p>The error:<br>" + str(e) + "</p>"
+        hed = '<h1>Something is broken.</h1>'
+        return hed + error_text
+
+@app.route('/muscleTest')
+@cross_origin(origin="*")
+def get_muscle():
+
+    try:
+        muscles = db.session.execute(db.select(Muscle)
+            .order_by(Muscle.name)).scalars()
+
+        muscle_text = []
+        for muscle in muscles:
+            muscle_text.append({"name": muscle.name, "Body part (int?)": + muscle.body_part_id})
+        return jsonify(muscle_text)
+    except Exception as e:
+        # e holds description of the error
+        error_text = "<p>The error:<br>" + str(e) + "</p>"
+        hed = '<h1>Something is broken.</h1>'
+        return hed + error_text
+
+@app.route('/exerciseTest')
+@cross_origin(origin="*")
+def get_exercise():
+
+    try:
+        exercises = db.session.execute(db.select(Exercise)
+            .order_by(Exercise.name)).scalars()
+
+        exercise_text = []
+        for exercise in exercises:
+            exercise_text.append({"name": exercise.name, "description": + exercise.description})
+        return jsonify(exercise_text)
     except Exception as e:
         # e holds description of the error
         error_text = "<p>The error:<br>" + str(e) + "</p>"
