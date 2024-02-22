@@ -15,13 +15,13 @@ DROP TABLE IF EXISTS body_parts;
 
 -- Create a table which contains all body part records
 CREATE TABLE body_parts (
-	id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR (50)
 );
 
 -- Create a table which contains all muscle records
 CREATE TABLE muscles (
-	id INT AUTO_INCREMENT PRIMARY KEY, 
+    id INT AUTO_INCREMENT PRIMARY KEY, 
     name VARCHAR (50),
     body_part_id INT,
     FOREIGN KEY (body_part_id) REFERENCES body_parts(id)
@@ -29,14 +29,14 @@ CREATE TABLE muscles (
 
 -- Create a table which contains all exercise records
 CREATE TABLE exercises (
-	id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR (50), 
     description TEXT
 );
 
 -- Create a table which contains all workout program records
 CREATE TABLE workout_programs (
-	id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50),
     description TEXT
 );
@@ -65,35 +65,35 @@ VALUES ('Arms'),
     
 -- Add records to the muscles table
 INSERT INTO muscles (name, body_part_id)
-	VALUES ('Biceps', 1),
-		   ('Triceps', 1),
-		   ('Brachioradialis', 1),
-		   ('Flexor carpi', 1),
-		   ('Extensor carpi', 1),
-		   ('Quadriceps', 2),
-		   ('Hamstrings', 2),
-		   ('Gluteus Maximus', 2),
-		   ('Adductors', 2),
-		   ('Abductors', 2),
-		   ('Calves', 2),
-		   ('Tibialis Anterior', 2),
-		   ('Pectoralis major', 3),
-		   ('Pectoralis minor', 3),
-		   ('Serratus anterior', 3),
-		   ('Subclavius', 3),
-		   ('Latissimus Dorsi', 4),
-		   ('Rhomboids', 4),
-		   ('Erector Spinae', 4),
-		   ('Teres Major', 4),
-		   ('Teres Minor', 4),
-		   ('Deltoid', 5),
-		   ('Trapezius', 5),
-		   ('Infraspinatus', 5),
-		   ('Supraspinatus', 5),
-		   ('Trapezius', 4),
-		   ('Deltoid', 4),
-		   ('Latissimus Dorsi', 5),
-		   ('Pectoralis major', 5);
+    VALUES ('Biceps', 1),
+           ('Triceps', 1),
+           ('Brachioradialis', 1),
+           ('Flexor carpi', 1),
+           ('Extensor carpi', 1),
+           ('Quadriceps', 2),
+           ('Hamstrings', 2),
+           ('Gluteus Maximus', 2),
+           ('Adductors', 2),
+           ('Abductors', 2),
+           ('Calves', 2),
+           ('Tibialis Anterior', 2),
+           ('Pectoralis major', 3),
+           ('Pectoralis minor', 3),
+           ('Serratus anterior', 3),
+           ('Subclavius', 3),
+           ('Latissimus Dorsi', 4),
+           ('Rhomboids', 4),
+           ('Erector Spinae', 4),
+           ('Teres Major', 4),
+           ('Teres Minor', 4),
+           ('Deltoid', 5),
+           ('Trapezius', 5),
+           ('Infraspinatus', 5),
+           ('Supraspinatus', 5),
+           ('Trapezius', 4),
+           ('Deltoid', 4),
+           ('Latissimus Dorsi', 5),
+           ('Pectoralis major', 5);
 
 
 -- Add records to exercises table
@@ -281,25 +281,25 @@ VALUES
     (115, 29), (116, 29), (117, 29), (118, 29);
 
 -- Shoulder Exercises
-INSERT INTO muscles_exercises (exercise_id, muscle_id)
-VALUES 
-    (119, 22), (120, 22), (121, 22), (122, 22), (123, 22),
-    (124, 23), (125, 23), (126, 23), (127, 23),
-    (128, 24), (129, 24), (130, 24), (131, 24),
-    (132, 25), (133, 25), (134, 25), (135, 25), (136, 25),
-    (137, 26), (138, 26), (139, 26), (140, 26), (141, 26),
-    (142, 23), (143, 23), (144, 23), (145, 23),
-    (146, 24), (147, 24), (148, 24), (149, 24),
-    (150, 25), (151, 25), (152, 25), (153, 25),
-    (154, 28), (155, 28), (156, 28), (157, 28), (158, 28),
-    (159, 29), (160, 29), (161, 29), (162, 29);
+-- INSERT INTO muscles_exercises (exercise_id, muscle_id)
+-- VALUES 
+--     (119, 22), (120, 22), (121, 22), (122, 22), (123, 22),
+--     (124, 23), (125, 23), (126, 23), (127, 23),
+--     (128, 24), (129, 24), (130, 24), (131, 24),
+--     (132, 25), (133, 25), (134, 25), (135, 25), (136, 25),
+--     (137, 26), (138, 26), (139, 26), (140, 26), (141, 26),
+--     (142, 23), (143, 23), (144, 23), (145, 23),
+--     (146, 24), (147, 24), (148, 24), (149, 24),
+--     (150, 25), (151, 25), (152, 25), (153, 25),
+--     (154, 28), (155, 28), (156, 28), (157, 28), (158, 28),
+--     (159, 29), (160, 29), (161, 29), (162, 29);
 
 
 -- Add records to workout programs table
 INSERT INTO workout_programs (name, description)
-	VALUES ('James' 's Arm Workout', 'An arm workout which James uses.'),
-    VALUES ('James' 's Leg Workout', 'A leg workout which James uses.')
-    VALUES ('James' 's Chest Workout', 'A chest workout which James uses.');
+    VALUES  ('James Arm Workout', 'An arm workout which James uses.'),
+            ('James Leg Workout', 'A leg workout which James uses.'),
+            ('James Chest Workout', 'A chest workout which James uses.');
 
 -- Add records to exercises_workout_program table
 INSERT INTO exercises_workout_program (workout_program_id, exercise_id)
