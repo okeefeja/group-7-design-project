@@ -187,16 +187,26 @@ def get_workout_programs():
 
     return jsonify(programs_list)
 
-@app.route('/dev')
+@app.route('/workout_programs/<int:program_id>')
 @cross_origin(origin="*")
-def get_dummy():
-    return jsonify([{"name": "Barbell Bench Press", "description": "Lie on bench, lower bar to chest, press up, targeting chest, shoulders, and triceps."},
-                   {"name": 'Incline Bench Press', "description": "Lie on incline bench, lower bar to upper chest, press up, targeting upper chest."},
-                   {"name": "Dumbbell Bench Press", "description": "Lie on bench, lower dumbbells to chest, press up, targeting chest and stabilizing muscles."},
-                   {"name": "Decline Bench Press", "description": "Lie on decline bench, lower bar to lower chest, press up, targeting lower chest."},
-                   {"name": "Chest Flyes", "description": "Lie on bench, arms extended, lower dumbbells to sides, then raise, targeting chest."},
-                   {"name": "Chest Dips", "description": "Using parallel bars, lower body, then press up, targeting chest, shoulders, and triceps."}])
-    
+def get_workout_program_by_id(program_id):
+    program = WorkoutProgram.query.get(program_id)
+    if program:
+        exercises_list = []
+        for exercise in program.exercises:
+            exercises_list.append({
+                'id': exercise.id,
+                'name': exercise.name,
+                'description': exercise.description,
+            })
+        program_data = {
+            'id': program.id,
+            'name': program.name,
+            'description': program.description,
+            'exercises': exercises_list
+        }
+        return jsonify(program_data)
+
 if __name__ == '__main__':
-        app.run(debug=True)
+        app.run(debug=True, host="0.0.0.0", port="5000" )
 
