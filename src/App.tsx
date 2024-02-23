@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import styled from "styled-components/native";
-import { DummyData, DummyList } from "./types/API";
+import { WorkoutProgram, WorkoutProgramList } from "./types/API";
 import { fetchFromBackend } from "./services/API";
 
 export default function App() {
@@ -12,7 +12,7 @@ export default function App() {
   // we need to tell React what type "data" will be, since it fetches
   // from backend we tell react that it will either be a "DummyList"
   // (a type we have created, see ./types/API.ts) or null
-  const [data, setData] = useState<DummyList | null>();
+  const [data, setData] = useState<WorkoutProgramList | null>();
 
   // If something goes wrong with the request, we want to be able to
   // set an error state to true, default false
@@ -21,12 +21,13 @@ export default function App() {
   // In typescript we also have to declare what types will be returned
   // from a function, in this case "Promise<Void>"
   async function getDummyData(): Promise<void> {
-    const fetchedDummyData: DummyList | null = await fetchFromBackend();
+    const fetchedWorkoutPrograms: WorkoutProgramList | null =
+      await fetchFromBackend();
 
     // If our request is succesfull, we set the state variable "data"
-    // to the value "fetchedDummyData" from our function
-    if (fetchedDummyData) {
-      setData(fetchedDummyData);
+    // to the value "fetchedWorkoutPrograms" from our function
+    if (fetchedWorkoutPrograms) {
+      setData(fetchedWorkoutPrograms);
     } else {
       // Else we set the error state variable to true
       setError(true);
@@ -35,13 +36,13 @@ export default function App() {
 
   useEffect(() => {
     getDummyData();
-  }, [data]);
+  }, []);
 
   return (
     <ScContainer>
       <ScTitle>Frontend framework initialized!</ScTitle>
       {data &&
-        data.map((element: DummyData, i: number) => {
+        data.map((element: WorkoutProgram, i: number) => {
           return (
             <ScExerciseContainer key={i}>
               <ScExerciseTitle>{element.name}</ScExerciseTitle>

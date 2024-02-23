@@ -1,4 +1,4 @@
-type DummyData = { name: string; description: string };
-type DummyList = DummyData[];
+type WorkoutProgram = { name: string; description: string };
+type WorkoutProgramList = WorkoutProgram[];
 
-export type { DummyData, DummyList };
+export type { WorkoutProgram, WorkoutProgramList };
