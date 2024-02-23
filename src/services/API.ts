@@ -1,10 +1,10 @@
-import { WorkoutProgramList } from "../types/API";
+import { WorkoutProgram, WorkoutProgramList } from "../types/API";
 
-const baseURL = "http://127.0.0.1:5000";
+const baseURL = "http://192.168.0.65:5000";
 
-async function fetchFromBackend(): Promise<WorkoutProgramList | null> {
+async function fetchAllWorkoutPrograms(): Promise<WorkoutProgramList | null> {
   try {
-    const response = await fetch(`${baseURL}/dev`);
+    const response = await fetch(`${baseURL}/workout_programs`);
     if (response.ok) {
       const data: WorkoutProgramList = await response.json();
       return data;
@@ -17,4 +17,21 @@ async function fetchFromBackend(): Promise<WorkoutProgramList | null> {
   }
 }
 
-export { fetchFromBackend };
+async function fetchWorkoutProgramById(
+  programId: number
+): Promise<WorkoutProgram | null> {
+  try {
+    const response = await fetch(`${baseURL}/workout_programs/${programId}`);
+    if (response.ok) {
+      const data: WorkoutProgram = await response.json();
+      return data;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export { fetchAllWorkoutPrograms, fetchWorkoutProgramById };

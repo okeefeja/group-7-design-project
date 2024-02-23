@@ -4,16 +4,19 @@ import {
   ScDescriptionText,
   ScMuscleText,
   ScTitleText,
-} from "./WorkoutCard.styled";
+} from "./Card.styled";
 
-interface WorkoutCardProps {
+interface CardProps {
   title: string;
   description: string;
+  action: () => void;
+  // Add muscle group from backend
 }
 
-export default function WorkoutCard({ title, description }: WorkoutCardProps) {
+// We can use the types WorkoutProgram and Exercise later on
+export default function Card({ title, description, action }: CardProps) {
   return (
-    <ScCardContainer>
+    <ScCardContainer onPress={action}>
       {/* Needs muscle group from backend */}
       <ScMuscleText>BACK / BICEPS</ScMuscleText>
       <ScTitleText>{title}</ScTitleText>
