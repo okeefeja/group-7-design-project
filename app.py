@@ -77,8 +77,8 @@ class MusclesToExercises(db.Model):
     __tablename__ = 'muscles-exercises'
     muscle_id = db.Column(db.Integer, db.ForeignKey('muscles.id'), primary_key=True)
     muscle = db.relationship("Muscle", backref=db.backref("muscles", uselist=False))
-    #exercise_id = db.Column(db.Integer, db.ForeignKey('exercises.id'), primary_key=True)
-    #exercise = db.relationship("Exercise", backref=db.backref("exercises", uselist=False))
+    exercise_id = db.Column(db.Integer, db.ForeignKey('exercises.id'), primary_key=True)
+    exercise = db.relationship("Exercise", backref=db.backref("exercises", uselist=False))
 
 exercises_workout_program = db.Table('exercises_workout_program',
     db.Column('workout_program_id', db.Integer, db.ForeignKey('workout_programs.id'), primary_key=True),
