@@ -1,13 +1,3 @@
-"""
-test for a local -MySQL- database connection with XAMPP
-requires PyMySQL, Flask-SQLAlchemy, Flask
-.
-make sure your virtualenv is activated!
-make sure you have "started all" in XAMPP!
-code below works for a MySQL database in XAMPP
-- NOT XAMPP VM - on Mac OS
-"""
-
 import pymysql
 from flask import Flask, jsonify
 from flask_cors import cross_origin
@@ -20,7 +10,6 @@ import os
 # if not os.getenv("DATABASE_URL"):
 #     raise RuntimeError("DATABASE_URL is not set")
 
-
 # this variable, db, will be used for all SQLAlchemy commands
 db = SQLAlchemy()
 # create the app
@@ -32,7 +21,8 @@ app = Flask(__name__)
 
 # CHANGE NOTHING BELOW
 # put them all together as a string that shows SQLAlchemy where the database is
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:FlyingPigs796!@localhost/fitness_app'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
@@ -67,18 +57,30 @@ class Exercise(db.Model):
     # Define the relationship back to WorkoutProgram
     workout_programs = db.relationship('WorkoutProgram', secondary='exercises_workout_program', back_populates='exercises')
 
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(50))
+    last_name = db.Column(db.String(50))
+    username = db.Column(db.String(50))
+    password = db.Column(db.String(50))
+
 class ExercisesToWorkoutPrograms(db.Model):
     __tablename__ = 'exercises_workout_program'
     workout_program_id = db.Column(db.Integer, db.ForeignKey('workout_programs.id'), primary_key=True)
     exercise_id = db.Column(db.Integer, db.ForeignKey('exercises.id'), primary_key=True)
 
-
 class MusclesToExercises(db.Model):
-    __tablename__ = 'muscles-exercises'
+    __tablename__ = 'muscles_exercises'
     muscle_id = db.Column(db.Integer, db.ForeignKey('muscles.id'), primary_key=True)
     muscle = db.relationship("Muscle", backref=db.backref("muscles", uselist=False))
     exercise_id = db.Column(db.Integer, db.ForeignKey('exercises.id'), primary_key=True)
     exercise = db.relationship("Exercise", backref=db.backref("exercises", uselist=False))
+
+class UsersToWorkoutPrograms(db.Model):
+    __tablename__ = 'users_workout_program'
+    workout_program_id = db.Column(db.Integer, db.ForeignKey('workout_programs.id'), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
 
 exercises_workout_program = db.Table('exercises_workout_program',
     db.Column('workout_program_id', db.Integer, db.ForeignKey('workout_programs.id'), primary_key=True),
@@ -158,7 +160,6 @@ def get_exercise():
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
 
-
 @app.route('/workout_programs')
 @cross_origin(origin="*")
 def get_workout_programs():
@@ -187,26 +188,43 @@ def get_workout_programs():
 
     return jsonify(programs_list)
 
-@app.route('/workout_programs/<int:program_id>')
+@app.route('/users')
 @cross_origin(origin="*")
-def get_workout_program_by_id(program_id):
-    program = WorkoutProgram.query.get(program_id)
-    if program:
-        exercises_list = []
-        for exercise in program.exercises:
-            exercises_list.append({
-                'id': exercise.id,
-                'name': exercise.name,
-                'description': exercise.description,
-            })
-        program_data = {
-            'id': program.id,
-            'name': program.name,
-            'description': program.description,
-            'exercises': exercises_list
-        }
-        return jsonify(program_data)
+def get_users():
+    try:
+        # Fetch users ordered by their first name
+        users = db.session.execute(db.select(User).order_by(User.first_name)).scalars()
 
+        user_text = []
+        for user in users:
+            # For each user, fetch associated workout programs through the UsersToWorkoutPrograms table
+            workout_programs = db.session.execute(db.select(WorkoutProgram).join(UsersToWorkoutPrograms).filter(UsersToWorkoutPrograms.user_id == user.id)).scalars()
+
+            # Prepare user data, including their associated workout programs
+            user_data = {
+                "name": f"{user.first_name} {user.last_name}",
+                "username": user.username,
+                "workout_programs": [{"name": wp.name} for wp in workout_programs]
+            }
+            user_text.append(user_data)
+
+        return jsonify(user_text)
+    
+    except Exception as e:
+        # Handle errors
+        error_text = "<p>The error:<br>" + str(e) + "</p>"
+        hed = '<h1>Something is broken.</h1>'
+        return hed + error_text
+    
+@app.route('/dev')
+@cross_origin(origin="*")
+def get_dummy():
+    return jsonify([{"name": "Barbell Bench Press", "description": "Lie on bench, lower bar to chest, press up, targeting chest, shoulders, and triceps."},
+                   {"name": 'Incline Bench Press', "description": "Lie on incline bench, lower bar to upper chest, press up, targeting upper chest."},
+                   {"name": "Dumbbell Bench Press", "description": "Lie on bench, lower dumbbells to chest, press up, targeting chest and stabilizing muscles."},
+                   {"name": "Decline Bench Press", "description": "Lie on decline bench, lower bar to lower chest, press up, targeting lower chest."},
+                   {"name": "Chest Flyes", "description": "Lie on bench, arms extended, lower dumbbells to sides, then raise, targeting chest."},
+                   {"name": "Chest Dips", "description": "Using parallel bars, lower body, then press up, targeting chest, shoulders, and triceps."}])
+    
 if __name__ == '__main__':
-        app.run(debug=True, host="0.0.0.0", port="5000" )
-
+        app.run(debug=True)
