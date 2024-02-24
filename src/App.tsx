@@ -14,8 +14,14 @@ export default function App() {
         <Stack.Screen
           name="BrowseWorkoutPrograms"
           component={BrowseProgramScreen}
+          // Add our own Header component later
+          options={{ headerShown: false }}
         />
-        <Stack.Screen name="WorkoutProgram" component={WorkoutProgramScreen} />
+        <Stack.Screen
+          name="WorkoutProgram"
+          component={WorkoutProgramScreen}
+          // Add our own Header component later
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

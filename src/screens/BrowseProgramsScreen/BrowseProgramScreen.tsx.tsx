@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { fetchAllWorkoutPrograms } from "../../services/API";
 import { WorkoutProgram, WorkoutProgramList } from "../../types/API";
 import CardList from "../../components/CardList/CardList";
-import WorkoutCard from "../../components/Card/Card";
+import WorkoutCard from "../../components/WorkoutProgramCard/WorkoutProgramCard";
 import { ScBaseContainer } from "../../components/BaseContainer/BaseContainer.styled";
 
 interface BrowseProgramScreenProps {
@@ -37,11 +37,7 @@ export default function BrowseProgramScreen({
   }, []);
   return (
     <ScBaseContainer>
-      <CardList
-        CardComponent={WorkoutCard}
-        data={workoutPrograms}
-        action={onPressHandler}
-      />
+      <CardList data={workoutPrograms} action={onPressHandler} />
     </ScBaseContainer>
   );
 }

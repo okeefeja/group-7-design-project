@@ -11,8 +11,8 @@ const ScCardContainer = styled.TouchableOpacity`
 const ScTitleText = styled.Text`
   margin-top: 8px;
   width: 225px;
+  font-size: 32px;
   font-weight: 700;
-  font-size: 36px;
 `;
 
 const ScMuscleText = styled.Text`

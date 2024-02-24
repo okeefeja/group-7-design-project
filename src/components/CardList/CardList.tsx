@@ -1,40 +1,66 @@
 import React from "react";
-import { ExerciseList, WorkoutProgramList } from "../../types/API";
+import {
+  ExerciseList,
+  Exercises,
+  WorkoutProgram,
+  WorkoutProgramList,
+} from "../../types/API";
 import { ScCardListContainer, ScCardListScrollView } from "./CardList.styled";
+import ExerciseCard from "../ExerciseCard/ExerciseCard";
+import WorkoutProgramCard from "../WorkoutProgramCard/WorkoutProgramCard";
 
 interface CardListProps {
-  CardComponent: React.FC<{
-    title: string;
-    description: string;
-    action: () => void;
-  }>;
-
   // Add other types of card lists later
   data: WorkoutProgramList | ExerciseList | null;
   action: (id: number) => void;
 }
 
-export default function CardList({
-  CardComponent,
-  data,
-  action,
-}: CardListProps) {
+export default function CardList({ data, action }: CardListProps) {
   return (
-    <ScCardListScrollView>
+    <ScCardListScrollView
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
+    >
       <ScCardListContainer>
         {data &&
-          data.map(
-            (cardData: { id: number; name: string; description: string }) => {
+          data.map((cardData: any) => {
+            if (isWorkoutProgram(cardData)) {
               return (
-                <CardComponent
+                <WorkoutProgramCard
                   title={cardData.name}
                   description={cardData.description}
                   action={() => action(cardData.id)}
+                  key={cardData.id}
+                />
+              );
+            } else if (isExercise(cardData)) {
+              return (
+                <ExerciseCard
+                  title={cardData.name}
+                  description={cardData.description}
+                  key={cardData.id}
                 />
               );
             }
-          )}
+          })}
       </ScCardListContainer>
     </ScCardListScrollView>
+  );
+}
+
+function isExercise(data: any): data is Exercises {
+  return (
+    typeof data.id === "number" &&
+    typeof data.name === "string" &&
+    typeof data.description === "string"
+  );
+}
+
+function isWorkoutProgram(data: any): data is WorkoutProgram {
+  return (
+    typeof data.id === "number" &&
+    typeof data.name === "string" &&
+    typeof data.description === "string" &&
+    Array.isArray(data.exercises)
   );
 }
