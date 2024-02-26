@@ -170,13 +170,20 @@ def get_workout_programs():
         print(program);
         exercises_list = []
         for exercise in program.exercises:
-            
-            # Assuming each exercise has a 'muscles' relationship
-            #muscle_names = [muscle.name for muscle in exercise.muscles]
+            muscle_groups = []
+            muscles = MusclesToExercises.query.filter_by(exercise_id=exercise.id).all()
+            for muscle in muscles:
+                muscle_groups.append({
+                    'id': muscle.muscle.id,
+                    'name': muscle.muscle.name
+                })
+           
             exercises_list.append({
+                'id': exercise.id,
                 'name': exercise.name,
                 'description': exercise.description,
-                #'muscles': muscle_names  # Add this line to include muscle groups
+                'muscle_groups': muscle_groups
+             
             })
 
         programs_list.append({
@@ -195,10 +202,18 @@ def get_workout_program(program_id):
     if program:
         exercises_list = []
         for exercise in program.exercises:
+            muscle_groups = []
+            muscles = MusclesToExercises.query.filter_by(exercise_id=exercise.id).all()
+            for muscle in muscles:
+                muscle_groups.append({
+                    'id': muscle.muscle.id,
+                    'name': muscle.muscle.name
+                })
             exercises_list.append({
                 "id": exercise.id,
                 'name': exercise.name,
                 'description': exercise.description,
+                'muscle_groups': muscle_groups
             })
         program_data = {
             'id': program.id,
