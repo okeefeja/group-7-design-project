@@ -21,8 +21,8 @@ app = Flask(__name__)
 
 # CHANGE NOTHING BELOW
 # put them all together as a string that shows SQLAlchemy where the database is
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:FlyingPigs796!@localhost/fitness_app'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:FlyingPigs796!@localhost/fitness_app'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
@@ -188,6 +188,26 @@ def get_workout_programs():
 
     return jsonify(programs_list)
 
+@app.route('/workout_programs/<int:program_id>')
+@cross_origin(origin="*")
+def get_workout_program(program_id):
+    program = WorkoutProgram.query.get(program_id)
+    if program:
+        exercises_list = []
+        for exercise in program.exercises:
+            exercises_list.append({
+                "id": exercise.id,
+                'name': exercise.name,
+                'description': exercise.description,
+            })
+        program_data = {
+            'id': program.id,
+            'name': program.name,
+            'description': program.description,
+            'exercises': exercises_list
+        }
+        return jsonify(program_data)
+
 @app.route('/users')
 @cross_origin(origin="*")
 def get_users():
@@ -227,4 +247,4 @@ def get_dummy():
                    {"name": "Chest Dips", "description": "Using parallel bars, lower body, then press up, targeting chest, shoulders, and triceps."}])
     
 if __name__ == '__main__':
-        app.run(debug=True)
+        app.run(debug=True, host="0.0.0.0", port="5000")
