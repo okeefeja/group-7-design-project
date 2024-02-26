@@ -1,3 +1,4 @@
+import { ImageSourcePropType } from 'react-native';
 type Exercises = { id: number; name: string; description: string };
 type ExerciseList = Exercises[];
 type WorkoutProgram = {
@@ -8,4 +9,10 @@ type WorkoutProgram = {
 };
 type WorkoutProgramList = WorkoutProgram[];
 
-export type { WorkoutProgram, WorkoutProgramList, Exercises, ExerciseList };
+interface CustomHeaderProps {
+  title: string;
+  userName: string;
+  profilePic: ImageSourcePropType;
+}
+
+export type { WorkoutProgram, WorkoutProgramList, Exercises, ExerciseList, CustomHeaderProps };
