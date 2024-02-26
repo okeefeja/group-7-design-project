@@ -4,6 +4,7 @@ import { WorkoutProgram, WorkoutProgramList } from "../../types/API";
 import CardList from "../../components/CardList/CardList";
 import WorkoutCard from "../../components/WorkoutProgramCard/WorkoutProgramCard";
 import { ScBaseContainer } from "../../components/BaseContainer/BaseContainer.styled";
+import { navigateToWorkoutProgram } from "../../services/navigationUtils";
 
 interface BrowseProgramScreenProps {
   navigation: any;
@@ -28,8 +29,7 @@ export default function BrowseProgramScreen({
   }
 
   function onPressHandler(id: number) {
-    console.log("BROWSE:", id);
-    navigation.navigate("WorkoutProgram", { workoutId: id });
+    navigateToWorkoutProgram(navigation, id);
   }
 
   useEffect(() => {

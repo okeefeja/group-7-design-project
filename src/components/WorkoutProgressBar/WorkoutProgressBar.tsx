@@ -1,11 +1,46 @@
-import React from "react";
-import { ScBarContainer, ScBarItem } from "./WorkoutProgressBar.styled";
+import React, { useEffect } from "react";
+import { Text } from "react-native";
+import {
+  ScBarContainer,
+  ScBarItem,
+  ScContainer,
+  ScPercentageLabel,
+} from "./WorkoutProgressBar.styled";
+import { LayoutAnimation } from "react-native";
 
-export default function WorkoutProgressBar() {
+interface WorkoutProgressBarProps {
+  maxValue: number;
+  completedValue: number;
+}
+
+export default function WorkoutProgressBar({
+  maxValue,
+  completedValue,
+}: WorkoutProgressBarProps) {
+  useEffect(() => {
+    setTimeout(() => {
+      LayoutAnimation.easeInEaseOut();
+    }, 250);
+  });
   return (
-    <ScBarContainer>
-      <ScBarItem size={2} color="red" />
-      <ScBarItem size={3} color="blue" />
-    </ScBarContainer>
+    <ScContainer>
+      <ScPercentageLabel>
+        {(completedValue / maxValue) * 100}% completed
+      </ScPercentageLabel>
+      <ScBarContainer>
+        <ScBarItem
+          size={completedValue}
+          color="#49CB00"
+          side="left"
+          max={maxValue}
+        />
+        <ScBarItem
+          size={maxValue - completedValue}
+          color="#111111"
+          side="right"
+          max={maxValue}
+        />
+      </ScBarContainer>
+    </ScContainer>
   );
 }

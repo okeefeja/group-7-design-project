@@ -1,28 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScCardContainer,
   ScDescriptionText,
   ScMuscleText,
   ScTitleText,
 } from "./WorkoutProgramCard.styled";
+import { ExerciseList } from "../../types/API";
 
 interface WorkoutProgramCardProps {
   title: string;
   description: string;
+  exercises: ExerciseList;
   action: () => void;
-  // Add muscle group from backend
 }
 
-// We can use the types WorkoutProgram and Exercise later on
 export default function WorkoutProgramCard({
   title,
   description,
+  exercises,
   action,
 }: WorkoutProgramCardProps) {
+  const [muscleGroupString, setMuscleGroupString] = useState("");
+
+  function createMuscleGroupString() {
+    const tmp: string[] = [];
+    exercises.map((exercise) => {
+      exercise.muscle_groups.map((muscleGroup) => {
+        tmp.push(muscleGroup.name);
+      });
+    });
+    const uniqueMuscleGroups = [...new Set(tmp)];
+    setMuscleGroupString(uniqueMuscleGroups.join(" / ").toUpperCase());
+  }
+
+  useEffect(() => {
+    createMuscleGroupString();
+  }, []);
   return (
     <ScCardContainer onPress={action}>
-      {/* Needs muscle group from backend */}
-      <ScMuscleText>BACK / BICEPS</ScMuscleText>
+      <ScMuscleText>{muscleGroupString}</ScMuscleText>
       <ScTitleText>{title}</ScTitleText>
       <ScDescriptionText>{description}</ScDescriptionText>
     </ScCardContainer>

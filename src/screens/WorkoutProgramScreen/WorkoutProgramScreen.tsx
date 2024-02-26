@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Text } from "react-native";
 import CardList from "../../components/CardList/CardList";
 import Card from "../../components/WorkoutProgramCard/WorkoutProgramCard";
 import { WorkoutProgram } from "../../types/API";
@@ -20,6 +21,10 @@ export default function WorkoutProgramScreen({
   const [completedExercises, setCompletedExercises] = useState(0);
   const [error, setError] = useState(false);
 
+  function addCompletedExercise(int: number) {
+    setCompletedExercises(completedExercises + int);
+  }
+
   async function getWorkoutProgram(): Promise<void> {
     const fetchedWorkoutProgram: WorkoutProgram | null =
       await fetchWorkoutProgramById(workoutProgramId);
@@ -33,11 +38,18 @@ export default function WorkoutProgramScreen({
 
   useEffect(() => {
     getWorkoutProgram();
-  }, []);
+  }, [completedExercises]);
   return (
     workoutProgram && (
       <ScBaseContainer>
-        <CardList data={workoutProgram.exercises} action={() => {}} />
+        <WorkoutProgressBar
+          completedValue={completedExercises}
+          maxValue={workoutProgram.exercises.length}
+        />
+        <CardList
+          data={workoutProgram.exercises}
+          action={addCompletedExercise}
+        />
       </ScBaseContainer>
     )
   );

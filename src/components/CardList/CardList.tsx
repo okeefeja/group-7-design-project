@@ -29,6 +29,7 @@ export default function CardList({ data, action }: CardListProps) {
                 <WorkoutProgramCard
                   title={cardData.name}
                   description={cardData.description}
+                  exercises={cardData.exercises}
                   action={() => action(cardData.id)}
                   key={cardData.id}
                 />
@@ -38,6 +39,8 @@ export default function CardList({ data, action }: CardListProps) {
                 <ExerciseCard
                   title={cardData.name}
                   description={cardData.description}
+                  muscleGroups={cardData.muscle_groups}
+                  action={action}
                   key={cardData.id}
                 />
               );
