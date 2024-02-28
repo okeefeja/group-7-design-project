@@ -52,7 +52,7 @@ export default function BrowseProgramScreen({
         description="Browse here for your new favorite workout program!"
       />
          <FilterList filters={filterOptions} onFilterSelect={handleFilterSelect} />
-      <Spacer size={5} orientation="vertical" />
+      <Spacer size={4} orientation="vertical" />
       <CardList data={workoutPrograms} action={onPressHandler} />
     </ScBaseContainer>
   );
