@@ -22,7 +22,6 @@ app = Flask(__name__)
 # CHANGE NOTHING BELOW
 # put them all together as a string that shows SQLAlchemy where the database is
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:FlyingPigs796!@localhost/fitness_app'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
