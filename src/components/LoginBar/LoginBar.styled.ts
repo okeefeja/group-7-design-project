@@ -3,7 +3,7 @@ import styled from "styled-components/native";
 const ScCardContainer = styled.TouchableOpacity`
   padding: 9px;
   width: 50%;
-  background-color: #ff8610;
+  background-color: #ff6c01;
   border-radius: 12px;
   font-family: "Roboto";
   margin-top: 12px;
@@ -17,5 +17,13 @@ const ScTitleText = styled.Text`
   font-weight: 500;
 `;
 
+const ScTextInput = styled.TextInput`
+  height: 40px; 
+  margin: 12px; 
+  border-width: 1px; 
+  padding: 10px; 
+  border-color: #cccccc; 
+  border-radius: 5px; 
+`;
 
-export { ScCardContainer, ScTitleText };
+export { ScCardContainer, ScTitleText, ScTextInput };

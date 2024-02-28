@@ -6,11 +6,14 @@ import { styles } from "./BigLogo.styled";
 import { isLargeScreen } from "./constants";
 import { ImageSourcePropType } from "react-native";
 
+// Import your local image directly
+const logoImage = require('../../../assets/Logo.png');
 
-const BigLogo = (image: ImageURISource,) => {
+const BigLogo = () => {
     return (
         <View style={{ width: isLargeScreen ? 80 : 50 }}>
-            <Image source={{uri: '../assets/Logo.png'}} style={styles.bigLogo} />
+            {/* Use the imported logoImage directly in the source prop */}
+            <Image source={logoImage} style={styles.bigLogo} />
         </View>
     )
 }
