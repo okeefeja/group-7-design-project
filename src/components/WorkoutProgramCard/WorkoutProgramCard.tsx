@@ -5,40 +5,38 @@ import {
   ScMuscleText,
   ScTitleText,
 } from "./WorkoutProgramCard.styled";
-import { ExerciseList } from "../../types/API";
+import { BodyPartList, ExerciseList } from "../../types/API";
 
 interface WorkoutProgramCardProps {
   title: string;
   description: string;
-  exercises: ExerciseList;
+  bodyParts: BodyPartList;
   action: () => void;
 }
 
 export default function WorkoutProgramCard({
   title,
   description,
-  exercises,
+  bodyParts,
   action,
 }: WorkoutProgramCardProps) {
-  const [muscleGroupString, setMuscleGroupString] = useState("");
+  const [bodyPartString, setBodyPartString] = useState("");
 
-  function createMuscleGroupString() {
+  function createBodyPartString() {
     const tmp: string[] = [];
-    exercises.map((exercise) => {
-      exercise.muscle_groups.map((muscleGroup) => {
-        tmp.push(muscleGroup.name);
-      });
+    bodyParts.map((bodyPart) => {
+      tmp.push(bodyPart.name);
     });
-    const uniqueMuscleGroups = [...new Set(tmp)];
-    setMuscleGroupString(uniqueMuscleGroups.join(" / ").toUpperCase());
+    const uniqueBodyParts = [...new Set(tmp)];
+    setBodyPartString(uniqueBodyParts.join(" / ").toUpperCase());
   }
 
   useEffect(() => {
-    createMuscleGroupString();
+    createBodyPartString();
   }, []);
   return (
     <ScCardContainer onPress={action}>
-      <ScMuscleText>{muscleGroupString}</ScMuscleText>
+      <ScMuscleText>{bodyPartString}</ScMuscleText>
       <ScTitleText>{title}</ScTitleText>
       <ScDescriptionText>{description}</ScDescriptionText>
     </ScCardContainer>

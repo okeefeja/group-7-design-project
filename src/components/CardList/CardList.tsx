@@ -29,8 +29,8 @@ export default function CardList({ data, action }: CardListProps) {
                 <WorkoutProgramCard
                   title={cardData.name}
                   description={cardData.description}
-                  exercises={cardData.exercises}
                   action={() => action(cardData.id)}
+                  bodyParts={cardData.body_parts}
                   key={cardData.id}
                 />
               );
