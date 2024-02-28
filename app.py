@@ -1,3 +1,5 @@
+# Release 1
+
 import pymysql
 from flask import Flask, jsonify
 from flask_cors import cross_origin
