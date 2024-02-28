@@ -1,6 +1,6 @@
 import { ImageSourcePropType } from "react-native";
 
-type BodyPart = { name: string };
+type BodyPart = { id: number; name: string };
 type BodyPartList = BodyPart[];
 type Exercises = {
   id: number;
@@ -28,7 +28,6 @@ type FilterButtonProps = {
   label: string;
   onFilterSelect: (filter: string) => void;
 };
-
 
 export type {
   BodyPart,
