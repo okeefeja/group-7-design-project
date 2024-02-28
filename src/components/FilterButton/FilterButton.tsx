@@ -1,11 +1,15 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { FilterButtonProps } from '../../types/API';
 import { styles } from './FilterButton.styled';
 
 const FilterButton: React.FC<FilterButtonProps> = ({ onFilterSelect }) => {
   return (
-    <View style={styles.container}>
+    <ScrollView
+      horizontal
+      contentContainerStyle={styles.container}
+      showsHorizontalScrollIndicator={false}
+    >
       <TouchableOpacity style={styles.button} onPress={() => onFilterSelect('Back')}>
         <Text style={styles.buttonText}>Back</Text>
       </TouchableOpacity>
@@ -18,10 +22,13 @@ const FilterButton: React.FC<FilterButtonProps> = ({ onFilterSelect }) => {
       <TouchableOpacity style={styles.button} onPress={() => onFilterSelect('Chest')}>
         <Text style={styles.buttonText}>Chest</Text>
       </TouchableOpacity>
-      {/* <TouchableOpacity style={styles.button} onPress={() => onFilterSelect('Chest')}>
+      <TouchableOpacity style={styles.button} onPress={() => onFilterSelect('Arms')}>
         <Text style={styles.buttonText}>Arms</Text>
-      </TouchableOpacity> */}
-    </View>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => onFilterSelect('Cardio')}>
+        <Text style={styles.buttonText}>Cardio</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 };
 

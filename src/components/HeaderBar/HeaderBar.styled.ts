@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between", // Aligns children with space between them
-    paddingBottom : 15,
+    paddingBottom : 20,
     paddingTop : 50,
     paddingHorizontal: 20, // Fixed padding for mobile
     backgroundColor: "#1a1a1a",
