@@ -33,7 +33,12 @@ Run the following command to install dependencies:
 npm install
 ```
 
-### 4. Start the development server
+### 4. Start the backend server
+Follow the steps on backend branch!
+
+**Change the BASE_URL variable in /src/services/API.ts to the ip address that shows up in the terminal when you start the backend server!**
+
+### 5. Start the development server
 To start the development server run the command:
 ```sh
 npx expo start
@@ -49,7 +54,7 @@ To open the app in browser press w!
 4. Change the path on line 3 to ```"../../src/App"```
 5. Save and reload!
 
-### 5. Folder Structure
+### 6. Folder Structure
 This is the folder structure we will follow for now, when we get further along it might change a bit.
 ```bash
 project-directory/
@@ -72,7 +77,7 @@ project-directory/
 └── yarn.lock
 ```
 
-### 6. Learn More
+### 7. Learn More
 To learn more about React Native and Expo, check out the following resources:
 
 * [React Native](https://reactnative.dev/docs/getting-started)
