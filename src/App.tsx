@@ -1,3 +1,5 @@
+{/* Release 1 */}
+
 import React, { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { NavigationContainer } from "@react-navigation/native";
