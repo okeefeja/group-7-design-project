@@ -3,15 +3,31 @@ import { ScBaseContainer } from "../../components/BaseContainer/BaseContainer.st
 import BigLogo from "../../components/BigLogo/BigLogo";
 import LoginBar from "../../components/LoginBar/LoginBar";
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { signInWithEmailAndPassword, onAuthStateChanged, getAuth } from 'firebase/auth';
+import { signInWithEmail } from "../../../firebaseModel";
+import { navigateToBrowseWorkoutPrograms } from "../../services/navigationUtils";
 
-const LoginScreen = () => {
+interface LoginScreenProps {
+  navigation: any;
+}
+
+const LoginScreen = ({ navigation }:LoginScreenProps) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // Implement your login logic here
-    console.log(username, password);
+    signInWithEmail(username, password);
   };
+
+  const auth = getAuth();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigateToBrowseWorkoutPrograms(navigation);    
+      }
+    })
+  });
 
   return (
   <View style={styles.root}>
@@ -51,7 +67,6 @@ const styles = StyleSheet.create({
   },
   appTitle: {
     fontSize: 50, // Increased font size
-    fontFamily: 'Lato-Bold',
     fontWeight: 'bold', // Bold text
     color: '#ff6c01', // Orange color to match the login button
     textAlign: 'center', // Center the text

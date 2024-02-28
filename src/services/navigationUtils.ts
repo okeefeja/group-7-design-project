@@ -6,3 +6,9 @@ export function navigateToWorkoutProgram(
 ) {
   navigation.navigate("WorkoutProgram", { workoutId: id });
 }
+
+export function navigateToBrowseWorkoutPrograms(
+  navigation: NavigationProp<any>,
+) {
+  navigation.navigate("BrowseWorkoutPrograms");
+}
