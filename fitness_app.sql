@@ -315,13 +315,15 @@ VALUES
 INSERT INTO workout_programs (name, description)
     VALUES  ('James Arm Workout', 'An arm workout which James uses.'),
             ('James Leg Workout', 'A leg workout which James uses.'),
-            ('James Chest Workout', 'A chest workout which James uses.');
+            ('James Chest Workout', 'A chest workout which James uses.'),
+            ('Davys Back Workout', 'A back workout which Davy uses.');
 
 -- Add records to exercises_workout_program table
 INSERT INTO exercises_workout_program (workout_program_id, exercise_id)
     VALUES (1, 1), (1, 2), (1, 3), (1, 4), (1, 5),  
            (2, 25), (2, 26), (2, 28), (2, 29), (2, 30), 
-           (3, 60), (3, 61), (3, 62), (3, 63), (3, 64); 
+           (3, 60), (3, 61), (3, 62), (3, 63), (3, 64), 
+           (4, 75), (4, 76), (4, 78), (4, 79), (4, 80);
 
         
 -- Add records to users table
@@ -333,4 +335,4 @@ INSERT INTO users (first_name, last_name, username, password)
 
 -- Add records to users_workout_program table
 INSERT INTO users_workout_program (user_id, workout_program_id) 
-    VALUES (1,1), (1, 2), (1, 3);
+    VALUES (1,1), (1, 2), (1, 3), (3, 4);
