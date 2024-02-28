@@ -6,6 +6,8 @@ import { WorkoutProgram } from "../../types/API";
 import { fetchWorkoutProgramById } from "../../services/API";
 import { ScBaseContainer } from "../../components/BaseContainer/BaseContainer.styled";
 import WorkoutProgressBar from "../../components/WorkoutProgressBar/WorkoutProgressBar";
+import WorkoutDescriptor from "../../components/WorkoutDescriptor/Descriptor";
+import Spacer from "../../components/Spacer/Spacer";
 
 interface WorkoutProgramScreenProps {
   route: any;
@@ -42,6 +44,11 @@ export default function WorkoutProgramScreen({
   return (
     workoutProgram && (
       <ScBaseContainer>
+        <WorkoutDescriptor
+          title={workoutProgram.name}
+          description={workoutProgram.description}
+        />
+        <Spacer size={5} orientation="vertical" />
         <WorkoutProgressBar
           completedValue={completedExercises}
           maxValue={workoutProgram.exercises.length}

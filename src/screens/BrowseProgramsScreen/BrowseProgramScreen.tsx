@@ -5,6 +5,8 @@ import CardList from "../../components/CardList/CardList";
 import WorkoutCard from "../../components/WorkoutProgramCard/WorkoutProgramCard";
 import { ScBaseContainer } from "../../components/BaseContainer/BaseContainer.styled";
 import { navigateToWorkoutProgram } from "../../services/navigationUtils";
+import Descriptor from "../../components/WorkoutDescriptor/Descriptor";
+import Spacer from "../../components/Spacer/Spacer";
 
 interface BrowseProgramScreenProps {
   navigation: any;
@@ -37,6 +39,11 @@ export default function BrowseProgramScreen({
   }, []);
   return (
     <ScBaseContainer>
+      <Descriptor
+        title="Workout Programs"
+        description="Browse here for your new favorite workout program!"
+      />
+      <Spacer size={5} orientation="vertical" />
       <CardList data={workoutPrograms} action={onPressHandler} />
     </ScBaseContainer>
   );
