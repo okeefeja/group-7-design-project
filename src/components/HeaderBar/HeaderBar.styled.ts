@@ -1,41 +1,37 @@
-// HeaderBar.styled.ts
 import { StyleSheet } from "react-native";
-import {
-  paddingLaptop,
-  paddingMobile,
-  fontSizeLaptop,
-  fontSizeMobile,
-  isLargeScreen,
-} from "./constants";
 
-// HeaderBar.styled.ts
 export const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between", // Aligns children with space between them
-    paddingVertical: 10,
-    paddingHorizontal: isLargeScreen ? paddingLaptop : paddingMobile,
+    paddingBottom : 15,
+    paddingTop : 50,
+    paddingHorizontal: 20, // Fixed padding for mobile
     backgroundColor: "#1a1a1a",
   },
   profilePic: {
-    width: isLargeScreen ? 80 : 50,
-    height: isLargeScreen ? 80 : 50,
-    borderRadius: isLargeScreen ? 40 : 25,
+    top: 10,
+    width: 50, // Fixed width for mobile
+    height: 50, // Fixed height for mobile
+    borderRadius: 25, // Ensure this is half of width/height
+    backgroundColor : "#ff8610",
   },
   title: {
+    top: 10,
     flex: 1,
-    flexShrink: 1, // Allows the title to shrink if necessary
     textAlign: "center",
     fontWeight: "bold",
-    fontSize: isLargeScreen ? fontSizeLaptop : fontSizeMobile,
+    fontSize: 24, // Adjusted fixed font size for mobile
     color: "#ff8610",
     marginHorizontal: 10, // Gives the title some breathing room on the sides
   },
   userName: {
+    top: 10,
     fontWeight: "bold",
-    fontSize: isLargeScreen ? fontSizeLaptop : fontSizeMobile,
+    fontSize: 24, // Adjusted fixed font size for mobile
     color: "#ff8610",
     alignSelf: "center",
   },
+
 });

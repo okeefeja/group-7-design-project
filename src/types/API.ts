@@ -24,6 +24,11 @@ interface CustomHeaderProps {
   profilePic: ImageSourcePropType;
 }
 
+type FilterButtonProps = {
+  onFilterSelect: (filter: string) => void;
+};
+
+
 export type {
   BodyPart,
   BodyPartList,
@@ -32,4 +37,5 @@ export type {
   Exercises,
   ExerciseList,
   CustomHeaderProps,
+  FilterButtonProps,
 };
