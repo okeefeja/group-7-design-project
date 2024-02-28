@@ -25,6 +25,7 @@ interface CustomHeaderProps {
 }
 
 type FilterButtonProps = {
+  label: string;
   onFilterSelect: (filter: string) => void;
 };
 

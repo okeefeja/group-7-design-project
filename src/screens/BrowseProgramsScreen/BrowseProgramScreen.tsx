@@ -7,7 +7,7 @@ import { ScBaseContainer } from "../../components/BaseContainer/BaseContainer.st
 import { navigateToWorkoutProgram } from "../../services/navigationUtils";
 import Descriptor from "../../components/WorkoutDescriptor/Descriptor";
 import Spacer from "../../components/Spacer/Spacer";
-import FilterButton from "../../components/FilterButton/FilterButton";
+import FilterList from "../../components/FilterList/FilterList";
 
 interface BrowseProgramScreenProps {
   navigation: any;
@@ -42,13 +42,16 @@ export default function BrowseProgramScreen({
   useEffect(() => {
     getWorkoutProgram();
   }, []);
+
+  const filterOptions = ['Back', 'Shoulders', 'Legs', 'Chest', 'Arms', 'Cardio'];
+  
   return (
     <ScBaseContainer>
       <Descriptor
         title="Workout Programs"
         description="Browse here for your new favorite workout program!"
       />
-         <FilterButton onFilterSelect={handleFilterSelect}/>
+         <FilterList filters={filterOptions} onFilterSelect={handleFilterSelect} />
       <Spacer size={5} orientation="vertical" />
       <CardList data={workoutPrograms} action={onPressHandler} />
     </ScBaseContainer>

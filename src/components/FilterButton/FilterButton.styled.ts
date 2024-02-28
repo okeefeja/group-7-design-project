@@ -1,27 +1,19 @@
-import React from 'react';
-import { View, Button, StyleSheet } from 'react-native';
+// FilterButton.styled.ts
+import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-    container: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      paddingVertical: 15,
-      paddingHorizontal : 10,
-      alignItems : "center",
-    },
-    button: {
-      backgroundColor: "#ff8610", // Button background color
-      marginRight: 10,
-      paddingHorizontal: 20, // Horizontal padding, increase if you need wider buttons
-      paddingVertical: 10, // Vertical padding, adjust for the desired height
-      borderRadius: 20, // This creates the rounded edges for the oval shape
-      alignItems: 'center', // This ensures the text is centered within the button
-      justifyContent: 'center', // This ensures the text is centered vertically
-      minHeight : 40,
-    },
-    buttonText: {
-      color: "#000000", // Text color
-      fontSize: 16,
-      // Add other text styling such as font size or font weight if needed
-    },
-  });
+  button: {
+    backgroundColor: "#ff8610", // Button background color
+    marginRight: 10,
+    paddingHorizontal: 20, // Horizontal padding for width
+    paddingVertical: 10, // Vertical padding for height
+    borderRadius: 20, // Rounded edges for the oval shape
+    alignItems: 'center', // Center text horizontally
+    justifyContent: 'center', // Center text vertically
+    minHeight: 40, // Minimum height for touch targets
+  },
+  buttonText: {
+    color: "#000000", // Text color
+    fontSize: 16, // Text size
+  },
+});
