@@ -1,3 +1,5 @@
+-- Release 1
+
 -- Drop the database if it exists
 DROP DATABASE IF EXISTS fitness_app;
 
