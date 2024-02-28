@@ -2,8 +2,9 @@ import React from "react";
 import "./App.css";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import BrowseProgramScreen from "./screens/BrowseProgramsScreen/BrowseProgramScreen.tsx";
+import BrowseProgramScreen from "./screens/BrowseProgramsScreen/BrowseProgramScreen";
 import WorkoutProgramScreen from "./screens/WorkoutProgramScreen/WorkoutProgramScreen";
+import LoginScreen from "./screens/LoginScreen/LoginScreen";
 import CustomHeader from "./components/HeaderBar/HeaderBar";
 import defaultPic from "../assets/Logo.png";
 
@@ -26,6 +27,10 @@ export default function App() {
           name="WorkoutProgram"
           component={WorkoutProgramScreen}
           // Add our own Header component later
+        />
+        <Stack.Screen
+          name="LoginScreen"
+          component={LoginScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>
