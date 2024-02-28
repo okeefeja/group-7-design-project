@@ -104,6 +104,16 @@ def root():
         'tables': table_info,
     })
 
+@app.route('/body_parts')
+@cross_origin(origin="*")
+def get_body_parts():
+    # Fetch all body parts from the database
+    body_parts = BodyPart.query.all()
+
+    # Prepare data in the required format
+    body_parts_data = [{"id": bp.id, "name": bp.name} for bp in body_parts]
+
+    return jsonify(body_parts_data)
 
 @app.route('/workout_programs')
 @cross_origin(origin="*")
@@ -140,7 +150,7 @@ def get_workout_programs():
              
             })
 
-        body_parts_list = [{'name': bp} for bp in body_parts_set]
+        body_parts_list = [{'id': bp.id, 'name': bp.name} for bp in BodyPart.query.filter(BodyPart.name.in_(body_parts_set)).all()]
 
         programs_list.append({
             'id': program.id,
@@ -181,7 +191,7 @@ def get_workout_program_by_id(program_id):
                 'muscle_groups': muscle_groups
             })
 
-        body_parts_list = [{'name': bp} for bp in body_parts_set]
+        body_parts_list = [{'id': bp.id, 'name': bp.name} for bp in BodyPart.query.filter(BodyPart.name.in_(body_parts_set)).all()]
 
         program_data = {
             'id': program.id,
