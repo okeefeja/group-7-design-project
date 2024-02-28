@@ -38,6 +38,8 @@ class Muscle(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     body_part_id = db.Column(db.Integer, db.ForeignKey('body_parts.id'))
+
+    # Define the relationship to BodyPart
     body_part = db.relationship("BodyPart", backref=db.backref("body_parts", uselist=False))
 
 class WorkoutProgram(db.Model):
@@ -45,6 +47,7 @@ class WorkoutProgram(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
     description = db.Column(db.String)
+
     # Define the relationship to Exercise
     exercises = db.relationship('Exercise', secondary='exercises_workout_program', back_populates='workout_programs')
 
@@ -53,7 +56,8 @@ class Exercise(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
     description = db.Column(db.String)
-    # Define the relationship back to WorkoutProgram
+
+    # Define the relationship to WorkoutProgram
     workout_programs = db.relationship('WorkoutProgram', secondary='exercises_workout_program', back_populates='exercises')
 
 class User(db.Model):
@@ -87,77 +91,19 @@ exercises_workout_program = db.Table('exercises_workout_program',
     extend_existing=True
 )
 
-
 @app.route('/')
-def index():
-    try:
-        muscles = db.session.execute(db.select(Muscle)
-            .order_by(Muscle.name)).scalars()
+def root():
+    table_info = {}
 
-        muscle_text = '<ul>'
-        for muscle in muscles:
-            muscle_text += '<li>' + muscle.name + '  :  ' + muscle.body_part.name + '<li>'
-        muscle_text += '</ul>'
-        return muscle_text
-    except Exception as e:
-        # e holds description of the error
-        error_text = "<p>The error:<br>" + str(e) + "</p>"
-        hed = '<h1>Something is broken.</h1>'
-        return hed + error_text
-    
-@app.route('/bodyTest')
-@cross_origin(origin="*")
-def get_body_part():
+    for table_name in db.metadata.tables.keys():
+        table = db.metadata.tables[table_name]
+        entity_count = db.session.query(table).count()
+        table_info[table_name] = entity_count
 
-    try:
-        bodyParts = db.session.execute(db.select(BodyPart)
-            .order_by(BodyPart.name)).scalars()
+    return jsonify({
+        'tables': table_info,
+    })
 
-        bodypart_text = []
-        for part in bodyParts:
-            bodypart_text.append({"name": part.name})
-        return jsonify(bodypart_text)
-    except Exception as e:
-        # e holds description of the error
-        error_text = "<p>The error:<br>" + str(e) + "</p>"
-        hed = '<h1>Something is broken.</h1>'
-        return hed + error_text
-
-@app.route('/muscleTest')
-@cross_origin(origin="*")
-def get_muscle():
-
-    try:
-        muscles = db.session.execute(db.select(Muscle)
-            .order_by(Muscle.name)).scalars()
-
-        muscle_text = []
-        for muscle in muscles:
-            muscle_text.append({"name": muscle.name, "Body part (int?)": + muscle.body_part_id})
-        return jsonify(muscle_text)
-    except Exception as e:
-        # e holds description of the error
-        error_text = "<p>The error:<br>" + str(e) + "</p>"
-        hed = '<h1>Something is broken.</h1>'
-        return hed + error_text
-
-@app.route('/exerciseTest')
-@cross_origin(origin="*")
-def get_exercise():
-
-    try:
-        exercises = db.session.execute(db.select(Exercise)
-            .order_by(Exercise.name)).scalars()
-
-        exercise_text = []
-        for exercise in exercises:
-            exercise_text.append({"name": exercise.name, "description": + exercise.description})
-        return jsonify(exercise_text)
-    except Exception as e:
-        # e holds description of the error
-        error_text = "<p>The error:<br>" + str(e) + "</p>"
-        hed = '<h1>Something is broken.</h1>'
-        return hed + error_text
 
 @app.route('/workout_programs')
 @cross_origin(origin="*")
@@ -166,17 +112,26 @@ def get_workout_programs():
     programs_list = []
 
     for program in workout_programs:
-        print(program);
         exercises_list = []
+        body_parts_set = set()  # Using a set to ensure unique body parts across all exercises
+
         for exercise in program.exercises:
             muscle_groups = []
+
+            # Fetch muscle groups associated with the exercise
             muscles = MusclesToExercises.query.filter_by(exercise_id=exercise.id).all()
             for muscle in muscles:
+
+                # Fetch body parts associated with the exercise
+                body_part = BodyPart.query.filter_by(id=muscle.muscle.body_part_id).first()
+                if body_part:
+                    body_parts_set.add(body_part.name)  # Add body part name to the set
+
                 muscle_groups.append({
                     'id': muscle.muscle.id,
                     'name': muscle.muscle.name
                 })
-           
+
             exercises_list.append({
                 'id': exercise.id,
                 'name': exercise.name,
@@ -185,10 +140,13 @@ def get_workout_programs():
              
             })
 
+        body_parts_list = [{'name': bp} for bp in body_parts_set]
+
         programs_list.append({
             'id': program.id,
             'name': program.name,
             'description': program.description,
+            'body_parts': body_parts_list,
             'exercises': exercises_list
         })
 
@@ -196,30 +154,43 @@ def get_workout_programs():
 
 @app.route('/workout_programs/<int:program_id>')
 @cross_origin(origin="*")
-def get_workout_program(program_id):
+def get_workout_program_by_id(program_id):
     program = WorkoutProgram.query.get(program_id)
     if program:
         exercises_list = []
+        body_parts_set = set()
+
         for exercise in program.exercises:
             muscle_groups = []
             muscles = MusclesToExercises.query.filter_by(exercise_id=exercise.id).all()
+
             for muscle in muscles:
+                body_part = BodyPart.query.filter_by(id=muscle.muscle.body_part_id).first()
+                if body_part:
+                    body_parts_set.add(body_part.name)
+
                 muscle_groups.append({
                     'id': muscle.muscle.id,
                     'name': muscle.muscle.name
                 })
+
             exercises_list.append({
                 "id": exercise.id,
                 'name': exercise.name,
                 'description': exercise.description,
                 'muscle_groups': muscle_groups
             })
+
+        body_parts_list = [{'name': bp} for bp in body_parts_set]
+
         program_data = {
             'id': program.id,
             'name': program.name,
             'description': program.description,
+            'body_parts': body_parts_list,
             'exercises': exercises_list
         }
+
         return jsonify(program_data)
 
 @app.route('/users')
@@ -249,16 +220,6 @@ def get_users():
         error_text = "<p>The error:<br>" + str(e) + "</p>"
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
-    
-@app.route('/dev')
-@cross_origin(origin="*")
-def get_dummy():
-    return jsonify([{"name": "Barbell Bench Press", "description": "Lie on bench, lower bar to chest, press up, targeting chest, shoulders, and triceps."},
-                   {"name": 'Incline Bench Press', "description": "Lie on incline bench, lower bar to upper chest, press up, targeting upper chest."},
-                   {"name": "Dumbbell Bench Press", "description": "Lie on bench, lower dumbbells to chest, press up, targeting chest and stabilizing muscles."},
-                   {"name": "Decline Bench Press", "description": "Lie on decline bench, lower bar to lower chest, press up, targeting lower chest."},
-                   {"name": "Chest Flyes", "description": "Lie on bench, arms extended, lower dumbbells to sides, then raise, targeting chest."},
-                   {"name": "Chest Dips", "description": "Using parallel bars, lower body, then press up, targeting chest, shoulders, and triceps."}])
-    
+   
 if __name__ == '__main__':
         app.run(debug=True, host="0.0.0.0", port="5000")
