@@ -1,4 +1,7 @@
 import { ImageSourcePropType } from "react-native";
+
+type BodyPart = { id: number; name: string };
+type BodyPartList = BodyPart[];
 type Exercises = {
   id: number;
   name: string;
@@ -10,6 +13,7 @@ type WorkoutProgram = {
   id: number;
   name: string;
   description: string;
+  body_parts: BodyPartList;
   exercises: ExerciseList;
 };
 type WorkoutProgramList = WorkoutProgram[];
@@ -20,10 +24,18 @@ interface CustomHeaderProps {
   profilePic: ImageSourcePropType;
 }
 
+type FilterButtonProps = {
+  label: string;
+  onFilterSelect: (filter: string) => void;
+};
+
 export type {
+  BodyPart,
+  BodyPartList,
   WorkoutProgram,
   WorkoutProgramList,
   Exercises,
   ExerciseList,
   CustomHeaderProps,
+  FilterButtonProps,
 };
