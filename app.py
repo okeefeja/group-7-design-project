@@ -7,24 +7,18 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 import os
 
-#you need to set environment variable DATABASE_URL
-#with format mysql+pymysql://root:password@127.0.0.1/fitness_app
-# if not os.getenv("DATABASE_URL"):
-#     raise RuntimeError("DATABASE_URL is not set")
-
-# this variable, db, will be used for all SQLAlchemy commands
 db = SQLAlchemy()
-# create the app
 app = Flask(__name__)
 
 # assumes you did not create a password for your database
 # and the database username is the default, 'root'
 # change if necessary
 
-# CHANGE NOTHING BELOW
-# put them all together as a string that shows SQLAlchemy where the database is
+# SQLALCHEMY_DATABASE_URI must be set to the string:
+#                               mysql+pymysql://username:password@127.0.0.1/fitness_app
+# where username and password are your mysql username (default: root) and password
+# you can create an environment variable called "DATABASE_URL" or else manually set it
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 # initialize the app with Flask-SQLAlchemy
