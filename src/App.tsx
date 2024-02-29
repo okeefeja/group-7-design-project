@@ -8,7 +8,11 @@ import BrowseProgramScreen from "./screens/BrowseProgramsScreen/BrowseProgramScr
 import WorkoutProgramScreen from "./screens/WorkoutProgramScreen/WorkoutProgramScreen";
 import LoginScreen from "./screens/LoginScreen/LoginScreen";
 import CustomHeader from "./components/HeaderBar/HeaderBar";
-import defaultPic from "../assets/Logo.png";
+import HeaderLogo from "../assets/HeaderLogo.png";
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs(['Warning: ...']);
+LogBox.ignoreAllLogs(true);
 
 const Stack = createStackNavigator();
 
@@ -25,7 +29,7 @@ export default function App() {
           // Add our own Header component later
           options={{ 
             headerShown: true,
-            header: () => <CustomHeader title="Workout Programs" userName="User_1" profilePic={defaultPic} />,
+            header: () => <CustomHeader title="Group 7 Fitness App" userName="" profilePic={HeaderLogo} />,
            }}
         />
         <Stack.Screen

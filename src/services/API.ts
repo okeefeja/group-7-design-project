@@ -1,6 +1,6 @@
 import { BodyPartList, WorkoutProgram, WorkoutProgramList } from "../types/API";
 
-const baseURL = "http://10.6.77.126:5000";
+const baseURL = "http://10.6.74.190:5000";
 
 async function fetchAllWorkoutPrograms(): Promise<WorkoutProgramList | null> {
   try {

@@ -6,13 +6,14 @@ const ScButton = styled.TouchableOpacity<{ active: boolean }>`
   align-items: center;
   background-color: ${(props) => (props.active ? "black" : "#ff8610")};
   border-radius: 20px;
-  padding: 12px 24px;
+  padding: 0px 24px;
   margin-right: 8px;
-  border: ${(props) => (props.active ? "2px solid white" : "2px solid black")};
-`;
+  height: 30px;
+  border: ${(props) => (props.active ? "3px solid #ff8610" : "2px solid black")};
+  `;
 
 const ScButtonText = styled.Text<{ active: boolean }>`
-  color: ${(props) => (props.active ? "white" : "black")};
+  color: ${(props) => (props.active ? "#ff8610" : "black")};
   font-size: 16px;
 `;
 

@@ -2,6 +2,7 @@ import styled from "styled-components/native";
 
 const ScDecriptorContainer = styled.View`
   padding: 16px 16px 24px 16px;
+  margin-bottom: 10px;
   border-radius: 12px;
   background-color: #111;
 `;
