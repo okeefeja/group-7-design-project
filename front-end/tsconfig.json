@@ -1,0 +1,17 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "target": "esnext",
+    "module": "esnext",
+    "jsx": "react-native",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+    
+  },
+  "include": [
+    "**/*", // Include all files in the project
+    "./src/types/images.d.ts" // Adjust this path as necessary
+  ]
+}
