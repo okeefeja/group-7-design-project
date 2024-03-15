@@ -1,4 +1,6 @@
-{/* Release 1 */}
+{
+  /* Release 1 */
+}
 
 import React, { useCallback, useEffect, useState } from "react";
 import "./App.css";
@@ -9,37 +11,43 @@ import WorkoutProgramScreen from "./screens/WorkoutProgramScreen/WorkoutProgramS
 import LoginScreen from "./screens/LoginScreen/LoginScreen";
 import CustomHeader from "./components/HeaderBar/HeaderBar";
 import HeaderLogo from "../assets/HeaderLogo.png";
-import { LogBox } from 'react-native';
+import { LogBox } from "react-native";
+import AddWorkoutProgramScreen from "./screens/AddWorkoutProgramScreen/AddWorkoutProgramScreen";
 
-LogBox.ignoreLogs(['Warning: ...']);
+LogBox.ignoreLogs(["Warning: ..."]);
 LogBox.ignoreAllLogs(true);
 
 const Stack = createStackNavigator();
 
 export default function App() {
-
   return (
     <NavigationContainer>
       {/* <Stack.Navigator initialRouteName="BrowseWorkoutPrograms"> */}
-      <Stack.Navigator initialRouteName="LoginScreen">
-        
+      <Stack.Navigator initialRouteName="AddWorkoutProgramScreen">
         <Stack.Screen
           name="BrowseWorkoutPrograms"
           component={BrowseProgramScreen}
           // Add our own Header component later
-          options={{ 
+          options={{
             headerShown: true,
-            header: () => <CustomHeader title="Group 7 Fitness App" userName="" profilePic={HeaderLogo} />,
-           }}
+            header: () => (
+              <CustomHeader
+                title="Group 7 Fitness App"
+                userName=""
+                profilePic={HeaderLogo}
+              />
+            ),
+          }}
         />
         <Stack.Screen
           name="WorkoutProgram"
           component={WorkoutProgramScreen}
           // Add our own Header component later
         />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen
-          name="LoginScreen"
-          component={LoginScreen}
+          name="AddWorkoutProgramScreen"
+          component={AddWorkoutProgramScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>

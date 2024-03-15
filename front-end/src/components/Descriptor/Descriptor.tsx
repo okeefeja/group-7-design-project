@@ -1,6 +1,4 @@
 import React from "react";
-import { WorkoutProgram } from "../../types/API";
-import { View, Text } from "react-native";
 import {
   ScDecriptorContainer,
   ScDescriptionText,
