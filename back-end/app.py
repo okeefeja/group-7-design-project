@@ -111,6 +111,23 @@ def get_body_parts():
 
     return jsonify(body_parts_data)
 
+@app.route('/exercises')
+@cross_origin(origin="*")
+def get_exercises():
+    # Fetch all exercises from the database
+    exercises = Exercise.query.all()
+
+    # Prepare data in the required format
+    exercises_data = []
+    for exercise in exercises:
+        exercises_data.append({
+            'id': exercise.id,
+            'name': exercise.name,
+            'description': exercise.description
+        })
+
+    return jsonify(exercises_data)
+
 @app.route('/workout_programs')
 @cross_origin(origin="*")
 def get_workout_programs():
