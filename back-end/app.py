@@ -119,6 +119,7 @@ def get_exercises():
 
     for exercise in exercises:
         muscle_groups = []
+        body_parts = []
 
         # Fetch muscle groups associated with the exercise
         muscles = MusclesToExercises.query.filter_by(exercise_id=exercise.id).all()
@@ -129,16 +130,70 @@ def get_exercises():
                     'id': muscle_group.id,
                     'name': muscle_group.name
                 })
+                # Fetch the associated body part for the muscle
+                body_part = BodyPart.query.filter_by(id=muscle_group.body_part_id).first()
+                if body_part:
+                    body_parts.append({
+                        'id': body_part.id,
+                        'name': body_part.name
+                    })
 
         exercises_list.append({
             'id': exercise.id,
             'name': exercise.name,
             'description': exercise.description,
-            'muscle_groups': muscle_groups
+            'muscle_groups': muscle_groups,
+            'body_parts': body_parts
         })
 
     return jsonify(exercises_list)
 
+@app.route('/workout_programs')
+@cross_origin(origin="*")
+def get_workout_programs():
+    workout_programs = WorkoutProgram.query.all()
+    programs_list = []
+
+    for program in workout_programs:
+        exercises_list = []
+        body_parts_set = set()  # Using a set to ensure unique body parts across all exercises
+
+        for exercise in program.exercises:
+            muscle_groups = []
+
+            # Fetch muscle groups associated with the exercise
+            muscles = MusclesToExercises.query.filter_by(exercise_id=exercise.id).all()
+            for muscle in muscles:
+
+                # Fetch body parts associated with the exercise
+                body_part = BodyPart.query.filter_by(id=muscle.muscle.body_part_id).first()
+                if body_part:
+                    body_parts_set.add(body_part.name)  # Add body part name to the set
+
+                muscle_groups.append({
+                    'id': muscle.muscle.id,
+                    'name': muscle.muscle.name
+                })
+
+            exercises_list.append({
+                'id': exercise.id,
+                'name': exercise.name,
+                'description': exercise.description,
+                'muscle_groups': muscle_groups
+
+            })
+
+        body_parts_list = [{'id': bp.id, 'name': bp.name} for bp in BodyPart.query.filter(BodyPart.name.in_(body_parts_set)).all()]
+
+        programs_list.append({
+            'id': program.id,
+            'name': program.name,
+            'description': program.description,
+            'body_parts': body_parts_list,
+            'exercises': exercises_list
+        })
+
+    return jsonify(programs_list)
 
 @app.route('/workout_programs/<int:program_id>')
 @cross_origin(origin="*")
