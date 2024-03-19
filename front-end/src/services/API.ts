@@ -1,6 +1,11 @@
-import { BodyPartList, WorkoutProgram, WorkoutProgramList } from "../types/API";
+import {
+  BodyPartList,
+  ExerciseList,
+  WorkoutProgram,
+  WorkoutProgramList,
+} from "../types/API";
 
-const baseURL = "http://10.6.58.137:5000";
+const baseURL = "http://192.168.0.66:5000";
 
 async function fetchAllWorkoutPrograms(): Promise<WorkoutProgramList | null> {
   try {
@@ -49,4 +54,24 @@ async function fetchBodyParts(): Promise<BodyPartList | null> {
   }
 }
 
-export { fetchAllWorkoutPrograms, fetchWorkoutProgramById, fetchBodyParts };
+async function fetchAllExercises(): Promise<ExerciseList | null> {
+  try {
+    const response = await fetch(`${baseURL}/exercises`);
+    if (response.ok) {
+      const data: ExerciseList = await response.json();
+      return data;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export {
+  fetchAllWorkoutPrograms,
+  fetchWorkoutProgramById,
+  fetchBodyParts,
+  fetchAllExercises,
+};

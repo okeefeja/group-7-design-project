@@ -119,6 +119,7 @@ def get_exercises():
 
     for exercise in exercises:
         muscle_groups = []
+        body_parts = []
 
         # Fetch muscle groups associated with the exercise
         muscles = MusclesToExercises.query.filter_by(exercise_id=exercise.id).all()
@@ -129,12 +130,20 @@ def get_exercises():
                     'id': muscle_group.id,
                     'name': muscle_group.name
                 })
+                # Fetch the associated body part for the muscle
+                body_part = BodyPart.query.filter_by(id=muscle_group.body_part_id).first()
+                if body_part:
+                    body_parts.append({
+                        'id': body_part.id,
+                        'name': body_part.name
+                    })
 
         exercises_list.append({
             'id': exercise.id,
             'name': exercise.name,
             'description': exercise.description,
-            'muscle_groups': muscle_groups
+            'muscle_groups': muscle_groups,
+            'body_parts': body_parts
         })
 
     return jsonify(exercises_list)

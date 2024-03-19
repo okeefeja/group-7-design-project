@@ -7,6 +7,7 @@ type Exercises = {
   name: string;
   description: string;
   muscle_groups: { id: number; name: string }[];
+  body_parts: BodyPartList;
 };
 type ExerciseList = Exercises[];
 type WorkoutProgram = {
