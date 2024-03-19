@@ -12,6 +12,8 @@ import { navigateToWorkoutProgram } from "../../services/navigationUtils";
 import Descriptor from "../../components/WorkoutDescriptor/Descriptor";
 import Spacer from "../../components/Spacer/Spacer";
 import FilterList from "../../components/FilterList/FilterList";
+import NavigationBar from "../../components/NavigationBar/NavigationBar";
+import { View } from "react-native";
 
 interface BrowseProgramScreenProps {
   navigation: any;
@@ -78,8 +80,8 @@ export default function BrowseProgramScreen({
     getBodyParts();
   }, []);
 
-  console.log("FILTERS", filterOptions);
-  console.log("WorkoutPrograms: ", workoutPrograms);
+  // console.log("FILTERS", filterOptions);
+  // console.log("WorkoutPrograms: ", workoutPrograms);
 
   function filterWorkoutProgramsByBodyParts(filteringOptions: string[]) {
     if (workoutPrograms) {
@@ -103,5 +105,6 @@ export default function BrowseProgramScreen({
       <Spacer size={4} orientation="vertical" />
       <CardList data={workoutPrograms} action={onPressHandler} />
     </ScBaseContainer>
+    
   );
 }

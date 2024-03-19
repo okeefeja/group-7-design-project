@@ -10,6 +10,7 @@ import LoginScreen from "./screens/LoginScreen/LoginScreen";
 import CustomHeader from "./components/HeaderBar/HeaderBar";
 import HeaderLogo from "../assets/HeaderLogo.png";
 import { LogBox } from 'react-native';
+import MyTabs from "./components/NavigationBar/NavigationBar";
 
 LogBox.ignoreLogs(['Warning: ...']);
 LogBox.ignoreAllLogs(true);
@@ -22,25 +23,19 @@ export default function App() {
     <NavigationContainer>
       {/* <Stack.Navigator initialRouteName="BrowseWorkoutPrograms"> */}
       <Stack.Navigator initialRouteName="LoginScreen">
-        
-        <Stack.Screen
-          name="BrowseWorkoutPrograms"
-          component={BrowseProgramScreen}
-          // Add our own Header component later
-          options={{ 
+      <Stack.Screen name="LoginScreen" component={LoginScreen} />
+      <Stack.Screen
+          name="Main"
+          component={MyTabs}
+          options={{
             headerShown: true,
             header: () => <CustomHeader title="Group 7 Fitness App" userName="" profilePic={HeaderLogo} />,
-           }}
-        />
-        <Stack.Screen
-          name="WorkoutProgram"
-          component={WorkoutProgramScreen}
-          // Add our own Header component later
-        />
-        <Stack.Screen
-          name="LoginScreen"
-          component={LoginScreen}
-        />
+          }}
+        />  
+      <Stack.Screen
+        name="WorkoutProgram"
+        component={WorkoutProgramScreen}
+      />
       </Stack.Navigator>
     </NavigationContainer>
   );
