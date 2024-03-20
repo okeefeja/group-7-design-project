@@ -1,7 +1,7 @@
 # Release 1
 
 import pymysql
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
@@ -264,5 +264,58 @@ def get_users():
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
    
+@app.route('/workout_programs/add', methods=['POST'])
+@cross_origin(origin="*")
+def create_workout_program():
+    try:
+        data = request.get_json()
+
+        # Extract data from the request
+        name = data.get('name')
+        description = data.get('description')
+        exercises = data.get('exercises')
+
+        # Create the workout program
+        new_workout_program = WorkoutProgram(name=name, description=description)
+        db.session.add(new_workout_program)
+        db.session.commit()
+
+        # Create associations between exercises and the new workout program
+        for exercise_id in exercises:
+            exercise = Exercise.query.get(exercise_id)
+            if exercise:
+                # Create an instance of the association model and add it to the session
+                association = ExercisesToWorkoutPrograms(workout_program_id=new_workout_program.id, exercise_id=exercise_id)
+                db.session.add(association)
+
+        db.session.commit()
+
+        return jsonify({'message': 'Workout program created successfully!'})
+
+    except Exception as e:
+        # Handle errors
+        error_text = "<p>The error:<br>" + str(e) + "</p>"
+        hed = '<h1>Something is broken.</h1>'
+        return hed + error_text
+    
+# takes an array of ids to be removed, EX: [1,2]
+def remove_workout_programs(idArray):
+    try:
+        with app.app_context():
+            # Delete entries from the exercisesToWorkoutPrograms table
+            db.session.query(ExercisesToWorkoutPrograms).filter(ExercisesToWorkoutPrograms.workout_program_id.in_(idArray)).delete(synchronize_session=False)
+
+            # Delete entries from the workoutPrograms table
+            db.session.query(WorkoutProgram).filter(WorkoutProgram.id.in_(idArray)).delete(synchronize_session=False)
+
+            # Commit the changes
+            db.session.commit()
+
+            print('Workout programs removed successfully!')
+
+    except Exception as e:
+        # Handle errors
+        print('Error occurred:', e)
+    
 if __name__ == '__main__':
         app.run(debug=True, host="0.0.0.0", port="5000")
