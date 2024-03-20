@@ -6,12 +6,16 @@ import Spacer from "../Spacer/Spacer";
 interface UserInputProps {
   title: string;
   placeholder: string;
+  value: string;
+  setValue: (newValue: string) => void;
   textArea?: boolean;
 }
 
 export default function UserInput({
   title,
   placeholder,
+  value,
+  setValue,
   textArea = false,
 }: UserInputProps) {
   const [focused, setFocused] = useState(false);
@@ -29,6 +33,8 @@ export default function UserInput({
         focus={focused}
         textArea={textArea}
         multiline={textArea}
+        value={value}
+        onChangeText={setValue}
       />
     </View>
   );

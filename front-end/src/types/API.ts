@@ -19,6 +19,12 @@ type WorkoutProgram = {
 };
 type WorkoutProgramList = WorkoutProgram[];
 
+type WorkoutProgramForPOST = {
+  name: string;
+  description: string;
+  exercises: number[];
+};
+
 interface CustomHeaderProps {
   title: string;
   userName: string;
@@ -35,6 +41,7 @@ export type {
   BodyPartList,
   WorkoutProgram,
   WorkoutProgramList,
+  WorkoutProgramForPOST,
   Exercises,
   ExerciseList,
   CustomHeaderProps,

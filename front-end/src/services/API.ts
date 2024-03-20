@@ -2,6 +2,7 @@ import {
   BodyPartList,
   ExerciseList,
   WorkoutProgram,
+  WorkoutProgramForPOST,
   WorkoutProgramList,
 } from "../types/API";
 
@@ -69,9 +70,26 @@ async function fetchAllExercises(): Promise<ExerciseList | null> {
   }
 }
 
+async function addWorkoutProgram(workoutProgram: WorkoutProgramForPOST) {
+  try {
+    const response = await fetch(`${baseURL}/workout_programs/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(workoutProgram),
+    });
+    return response.ok;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
 export {
   fetchAllWorkoutPrograms,
   fetchWorkoutProgramById,
   fetchBodyParts,
   fetchAllExercises,
+  addWorkoutProgram,
 };

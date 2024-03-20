@@ -7,17 +7,24 @@ import { View, Text } from "react-native";
 import Descriptor from "../../components/Descriptor/Descriptor";
 import UserInput from "../../components/UserInput/UserInput";
 import Spacer from "../../components/Spacer/Spacer";
-import { ExerciseList } from "../../types/API";
-import { fetchAllExercises } from "../../services/API";
+import { ExerciseList, WorkoutProgramForPOST } from "../../types/API";
+import { addWorkoutProgram, fetchAllExercises } from "../../services/API";
 import ExerciseListSmall from "../../components/ExerciseListSmall/ExerciseListSmall";
 import SubmitButton from "../../components/Buttons/SubmitButton/SubmitButton";
 import CancelButton from "../../components/Buttons/CancelButton/CancelButton";
 import TextButton from "../../components/Buttons/TextButton/TextButton";
 
 export default function AddWorkoutProgramScreen() {
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [exercises, setExercises] = useState<ExerciseList | null>(null);
   const [error, setError] = useState(false);
   const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
+  const workoutProgram: WorkoutProgramForPOST = {
+    name: name,
+    description: description,
+    exercises: selectedExercises,
+  };
 
   async function getExercises() {
     const fetchedExercises: ExerciseList | null = await fetchAllExercises();
@@ -42,19 +49,29 @@ export default function AddWorkoutProgramScreen() {
     setSelectedExercises([]);
   }
 
+  function handleSubmit() {
+    addWorkoutProgram(workoutProgram);
+  }
+
   useEffect(() => {
     getExercises();
   }, []);
-
   return (
     <ScBaseContainerScroll>
       <Descriptor title="Add workout program" />
       <Spacer orientation="vertical" size={4} />
-      <UserInput title="Workout program name" placeholder="Name" />
+      <UserInput
+        title="Workout program name"
+        placeholder="Name"
+        value={name}
+        setValue={setName}
+      />
       <Spacer orientation="vertical" size={4} />
       <UserInput
         title="Description"
         placeholder="Description"
+        value={description}
+        setValue={setDescription}
         textArea={true}
       />
       <Spacer orientation="vertical" size={4} />
@@ -92,7 +109,7 @@ export default function AddWorkoutProgramScreen() {
           justifyContent: "center",
         }}
       >
-        <SubmitButton label="Add program" onClick={() => alert("Clicked")} />
+        <SubmitButton label="Add program" onClick={handleSubmit} />
         <Spacer orientation="horizontal" size={3} />
         <CancelButton />
       </View>
