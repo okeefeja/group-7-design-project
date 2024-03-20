@@ -6,12 +6,17 @@ import { ScTextButtonLabel } from "./TextButton.styled";
 interface TextButtonProps {
   label: string;
   onClick: () => void;
+  bold?: boolean;
 }
 
-export default function TextButton({ label, onClick }: TextButtonProps) {
+export default function TextButton({
+  label,
+  onClick,
+  bold = false,
+}: TextButtonProps) {
   return (
     <TouchableOpacity onPress={onClick}>
-      <ScTextButtonLabel>{label}</ScTextButtonLabel>
+      <ScTextButtonLabel bold={bold}>{label}</ScTextButtonLabel>
     </TouchableOpacity>
   );
 }

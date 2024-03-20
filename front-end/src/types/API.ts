@@ -25,12 +25,6 @@ type WorkoutProgramForPOST = {
   exercises: number[];
 };
 
-interface CustomHeaderProps {
-  title: string;
-  userName: string;
-  profilePic: ImageSourcePropType;
-}
-
 type FilterButtonProps = {
   label: string;
   onFilterSelect: (filter: string) => void;
@@ -44,6 +38,5 @@ export type {
   WorkoutProgramForPOST,
   Exercises,
   ExerciseList,
-  CustomHeaderProps,
   FilterButtonProps,
 };

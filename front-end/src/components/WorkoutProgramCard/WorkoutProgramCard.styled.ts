@@ -5,8 +5,8 @@ const ScCardContainer = styled.TouchableOpacity`
   width: 100%;
   background-color: #111;
   border-radius: 12px;
-  `;
-  
+`;
+
 const ScTitleText = styled.Text`
   margin-top: 8px;
   width: 225px;

@@ -8,7 +8,11 @@ export function navigateToWorkoutProgram(
 }
 
 export function navigateToBrowseWorkoutPrograms(
-  navigation: NavigationProp<any>,
+  navigation: NavigationProp<any>
 ) {
   navigation.navigate("BrowseWorkoutPrograms");
+}
+
+export function navigateToLogIn(navigation: NavigationProp<any>) {
+  navigation.navigate("LoginScreen");
 }

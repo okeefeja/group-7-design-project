@@ -28,16 +28,12 @@ export default function App() {
           name="BrowseWorkoutPrograms"
           component={BrowseProgramScreen}
           // Add our own Header component later
-          options={{
+          options={({ navigation }) => ({
             headerShown: true,
             header: () => (
-              <CustomHeader
-                title="Group 7 Fitness App"
-                userName=""
-                profilePic={HeaderLogo}
-              />
+              <CustomHeader username="User Usersson" navigation={navigation} />
             ),
-          }}
+          })}
         />
         <Stack.Screen
           name="WorkoutProgram"
