@@ -23,7 +23,7 @@ export default function App() {
   return (
     <NavigationContainer>
       {/* <Stack.Navigator initialRouteName="BrowseWorkoutPrograms"> */}
-      <Stack.Navigator initialRouteName="AddWorkoutProgramScreen">
+      <Stack.Navigator initialRouteName="LoginScreen">
         <Stack.Screen
           name="BrowseWorkoutPrograms"
           component={BrowseProgramScreen}
