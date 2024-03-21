@@ -25,6 +25,19 @@ type WorkoutProgramForPOST = {
   exercises: number[];
 };
 
+type NewUser = {
+  id: string;
+  username: string;
+  email: string;
+};
+
+type User = {
+  id: string;
+  username: string;
+  email: string;
+  workout_programs: { id: number; name: string }[];
+};
+
 type FilterButtonProps = {
   label: string;
   onFilterSelect: (filter: string) => void;
@@ -38,5 +51,7 @@ export type {
   WorkoutProgramForPOST,
   Exercises,
   ExerciseList,
+  NewUser,
+  User,
   FilterButtonProps,
 };

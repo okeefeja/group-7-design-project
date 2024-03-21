@@ -11,12 +11,11 @@ import WorkoutProgramScreen from "./screens/WorkoutProgramScreen/WorkoutProgramS
 import LoginScreen from "./screens/LoginScreen/LoginScreen";
 import CustomHeader from "./components/HeaderBar/HeaderBar";
 import HeaderLogo from "../assets/HeaderLogo.png";
-import { LogBox } from 'react-native';
+import { LogBox } from "react-native";
 import MyTabs from "./components/NavigationBar/NavigationBar";
 import AddWorkoutProgramScreen from "./screens/AddWorkoutProgramScreen/AddWorkoutProgramScreen";
 
-LogBox.ignoreLogs(["Warning: ..."]);
-LogBox.ignoreAllLogs(true);
+LogBox.ignoreLogs(["expo-font"]);
 
 const Stack = createStackNavigator();
 
@@ -25,24 +24,18 @@ export default function App() {
     <NavigationContainer>
       {/* <Stack.Navigator initialRouteName="BrowseWorkoutPrograms"> */}
       <Stack.Navigator initialRouteName="LoginScreen">
-      <Stack.Screen name="LoginScreen" component={LoginScreen} />
-      <Stack.Screen
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen
           name="Main"
           component={MyTabs}
-          options={{
+          options={({ navigation }) => ({
             headerShown: true,
-            header: () => <CustomHeader title="Group 7 Fitness App" userName="" profilePic={HeaderLogo} />,
-          }}
-        />  
-      <Stack.Screen
-        name="WorkoutProgram"
-        component={WorkoutProgramScreen}
-      />
-        <Stack.Screen
-          name="WorkoutProgram"
-          component={WorkoutProgramScreen}
-          // Add our own Header component later
+            header: () => (
+              <CustomHeader username="User Usersson" navigation={navigation} />
+            ),
+          })}
         />
+        <Stack.Screen name="WorkoutProgram" component={WorkoutProgramScreen} />
         <Stack.Screen
           name="AddWorkoutProgramScreen"
           component={AddWorkoutProgramScreen}

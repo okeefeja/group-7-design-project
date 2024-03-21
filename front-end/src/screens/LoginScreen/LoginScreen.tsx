@@ -32,8 +32,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   };
 
   const handleSignUp = () => {
-    // TODO: Implement insertion of new user to database
-    signUpUser(email, password, setError);
+    signUpUser(email, password, username, setError);
   };
 
   const handleModeSwitch = () => {
@@ -50,7 +49,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         navigateToBrowseWorkoutPrograms(navigation);
       }
     });
-  }, []);
+  }, [auth]);
   return (
     <ScBaseContainerScroll>
       <Text style={styles.appTitle}>Fitness App</Text>
