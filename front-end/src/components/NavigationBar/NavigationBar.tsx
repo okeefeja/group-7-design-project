@@ -5,6 +5,7 @@ import BrowseProgramScreen from '../../screens/BrowseProgramsScreen/BrowseProgra
 import ProfileScreen from '../../screens/ProfileScreen/ProfileScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import tabBarStyles from './NavigationBar.styled';
+import InformationScreen from '../../screens/InformationPage/InformationScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,6 +35,16 @@ function MyTabs() {
           headerShown: false, 
           tabBarIcon: ({ color, size }) => (
             <Icon name="person" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen 
+        name="Information"
+        component={InformationScreen}
+        options={{ 
+          headerShown: false, 
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="information-sharp" color={color} size={size} />
           ),
         }}
       />
