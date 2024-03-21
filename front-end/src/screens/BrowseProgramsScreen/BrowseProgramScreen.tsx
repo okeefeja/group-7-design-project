@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchAllWorkoutPrograms, fetchBodyParts } from "../../services/API";
+import { fetchAllWorkoutPrograms, fetchBodyParts, fetchFilteredWorkoutPrograms } from "../../services/API";
 import {
   BodyPartList,
   WorkoutProgram,
@@ -24,7 +24,7 @@ export default function BrowseProgramScreen({
     useState<WorkoutProgramList | null>(null);
   const [bodyParts, setBodyParts] = useState<BodyPartList | null>(null);
   const [error, setError] = useState(false);
-  const [filterOptions, setFilterOptions] = useState<string[]>([]);
+  const [filterOptions, setFilterOptions] = useState<number[]>([]);
 
   async function getWorkoutProgram(): Promise<void> {
     const fetchedWorkoutPrograms: WorkoutProgramList | null =
@@ -37,6 +37,16 @@ export default function BrowseProgramScreen({
     }
   }
 
+  async function getFilteredWorkoutProgram(filterIds:Array<number>): Promise<void> {
+    const fetchedWorkoutPrograms: WorkoutProgramList | null =
+      await fetchFilteredWorkoutPrograms(filterIds);
+
+    if (fetchedWorkoutPrograms) {
+      setWorkoutPrograms(fetchedWorkoutPrograms);
+    } else {
+      setError(true);
+    }
+  }
   async function getBodyParts(): Promise<void> {
     const fetchedBodyParts: BodyPartList | null = await fetchBodyParts();
 
@@ -51,8 +61,8 @@ export default function BrowseProgramScreen({
     navigateToWorkoutProgram(navigation, id);
   }
 
-  function handleFilterSelect(filter: string) {
-    let updatedFilterOptions: string[];
+  function handleFilterSelect(filter: number) {
+    let updatedFilterOptions: number[];
 
     if (filterOptions.includes(filter)) {
       updatedFilterOptions = filterOptions.filter(
@@ -67,9 +77,7 @@ export default function BrowseProgramScreen({
     if (updatedFilterOptions.length === 0) {
       getWorkoutProgram();
     } else {
-      setWorkoutPrograms(
-        filterWorkoutProgramsByBodyParts(updatedFilterOptions)
-      );
+      getFilteredWorkoutProgram(updatedFilterOptions);
     }
   }
 
@@ -78,17 +86,17 @@ export default function BrowseProgramScreen({
     getBodyParts();
   }, []);
 
-  function filterWorkoutProgramsByBodyParts(filteringOptions: string[]) {
-    if (workoutPrograms) {
-      return [...workoutPrograms].filter((program) =>
-        program.body_parts.every((bodyPart) =>
-          filteringOptions.includes(bodyPart.name)
-        )
-      );
-    } else {
-      return workoutPrograms;
-    }
-  }
+  //function filterWorkoutProgramsByBodyParts(filteringOptions: string[]) {
+  //  if (workoutPrograms) {
+  //    return [...workoutPrograms].filter((program) =>
+  //      program.body_parts.every((bodyPart) =>
+  //        filteringOptions.includes(bodyPart.name)
+  //      )
+  //    );
+  //  } else {
+  //    return workoutPrograms;
+  //  }
+  //}
 
   return (
     <ScBaseContainer>
