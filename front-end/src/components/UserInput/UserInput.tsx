@@ -9,6 +9,7 @@ interface UserInputProps {
   value: string;
   setValue: (newValue: string) => void;
   textArea?: boolean;
+  password?: boolean;
 }
 
 export default function UserInput({
@@ -17,6 +18,7 @@ export default function UserInput({
   value,
   setValue,
   textArea = false,
+  password = false,
 }: UserInputProps) {
   const [focused, setFocused] = useState(false);
 
@@ -25,7 +27,7 @@ export default function UserInput({
       <Text style={{ color: "white", fontSize: 18, fontWeight: "600" }}>
         {title}
       </Text>
-      <Spacer orientation="vertical" size={2} />
+      <Spacer orientation="vertical" size={1} />
       <ScTextInput
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
@@ -35,6 +37,7 @@ export default function UserInput({
         multiline={textArea}
         value={value}
         onChangeText={setValue}
+        secureTextEntry={password}
       />
     </View>
   );

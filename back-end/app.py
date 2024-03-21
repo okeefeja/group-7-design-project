@@ -58,11 +58,10 @@ class Exercise(db.Model):
 
 class User(db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(50))
-    last_name = db.Column(db.String(50))
+    id = db.Column(db.String(100), primary_key=True)
+    email = db.Column(db.String(50))
     username = db.Column(db.String(50))
-    password = db.Column(db.String(50))
+    
 
 class ExercisesToWorkoutPrograms(db.Model):
     __tablename__ = 'exercises_workout_program'
@@ -79,7 +78,7 @@ class MusclesToExercises(db.Model):
 class UsersToWorkoutPrograms(db.Model):
     __tablename__ = 'users_workout_program'
     workout_program_id = db.Column(db.Integer, db.ForeignKey('workout_programs.id'), primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    user_id = db.Column(db.String(100), db.ForeignKey('users.id'), primary_key=True)
 
 exercises_workout_program = db.Table('exercises_workout_program',
     db.Column('workout_program_id', db.Integer, db.ForeignKey('workout_programs.id'), primary_key=True),
@@ -241,7 +240,7 @@ def get_workout_program_by_id(program_id):
 def get_users():
     try:
         # Fetch users ordered by their first name
-        users = db.session.execute(db.select(User).order_by(User.first_name)).scalars()
+        users = db.session.execute(db.select(User).order_by(User.username)).scalars()
 
         user_text = []
         for user in users:
@@ -250,9 +249,10 @@ def get_users():
 
             # Prepare user data, including their associated workout programs
             user_data = {
-                "name": f"{user.first_name} {user.last_name}",
+                "id": user.id,
+                "email": user.email,
                 "username": user.username,
-                "workout_programs": [{"name": wp.name} for wp in workout_programs]
+                "workout_programs": [{"id": wp.id,"name": wp.name} for wp in workout_programs]
             }
             user_text.append(user_data)
 
@@ -264,6 +264,50 @@ def get_users():
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
    
+@app.route('/users/<string:user_id>')
+@cross_origin(origin="*")
+def get_user_by_id(user_id):
+    try:
+        user = User.query.get(user_id)
+        if user:
+            workout_programs = db.session.execute(db.select(WorkoutProgram).join(UsersToWorkoutPrograms).filter(UsersToWorkoutPrograms.user_id == user.id)).scalars()
+
+            # Prepare user data, including their associated workout programs
+            user_data = {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "workout_programs": [{"id": wp.id,"name": wp.name} for wp in workout_programs]
+            }
+            return jsonify(user_data)
+        else:
+            return jsonify({'message': 'User not found'}), 404  # Return 404 Not Found if user is not found
+    except Exception as e:
+        # Handle errors
+        print('Error occurred:', e)
+
+@app.route('/users/add', methods=['POST'])
+@cross_origin(origin="*")
+def create_user():
+    try:
+        data = request.get_json()
+
+        # Extract data from the request
+        id = data.get('id')
+        email = data.get('email')
+        username = data.get('username')
+
+        # Create User
+        new_user = User(id=id, email=email, username=username)
+        db.session.add(new_user)
+        db.session.commit()
+
+        return jsonify({'message': 'User created successfully!'})
+    
+    except Exception as e:
+        # Handle errors
+        print('Error occurred:', e)
+
 @app.route('/workout_programs/add', methods=['POST'])
 @cross_origin(origin="*")
 def create_workout_program():
@@ -298,7 +342,7 @@ def create_workout_program():
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
     
-# takes an array of ids to be removed, EX: [1,2]
+# takes an array of workout ids to be removed, EX: [1,2]
 def remove_workout_programs(idArray):
     try:
         with app.app_context():
@@ -312,6 +356,25 @@ def remove_workout_programs(idArray):
             db.session.commit()
 
             print('Workout programs removed successfully!')
+
+    except Exception as e:
+        # Handle errors
+        print('Error occurred:', e)
+
+# takes an array of user ids and removes them
+def remove_users(idArray):
+    try:
+        with app.app_context():
+            # Delete entries from the users table
+            db.session.query(User).filter(User.id.in_(idArray)).delete(synchronize_session=False)
+
+            # Delete entries from the users_workout_program table
+            db.session.query(UsersToWorkoutPrograms).filter(UsersToWorkoutPrograms.user_id.in_(idArray)).delete(synchronize_session=False)
+
+            # Commit the changes
+            db.session.commit()
+
+            print('Users removed successfully!')
 
     except Exception as e:
         # Handle errors

@@ -1,13 +1,14 @@
 import {
   BodyPartList,
   ExerciseList,
+  NewUser,
+  User,
   WorkoutProgram,
   WorkoutProgramForPOST,
   WorkoutProgramList,
 } from "../types/API";
 
-const baseURL = "http://192.168.1.108:5000";
-
+const baseURL = "http://192.168.0.66:5000";
 
 async function fetchAllWorkoutPrograms(): Promise<WorkoutProgramList | null> {
   try {
@@ -87,11 +88,43 @@ async function addWorkoutProgram(workoutProgram: WorkoutProgramForPOST) {
   }
 }
 
+async function fetchUserById(userId: string): Promise<User | null> {
+  try {
+    const response = await fetch(`${baseURL}/users/${userId}`);
+    if (response.ok) {
+      const data: User = await response.json();
+      return data;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+async function addUser(user: NewUser) {
+  try {
+    const response = await fetch(`${baseURL}/users/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+    return response.ok;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
 export {
   fetchAllWorkoutPrograms,
   fetchWorkoutProgramById,
   fetchBodyParts,
   fetchAllExercises,
   addWorkoutProgram,
-  //information-page
+  fetchUserById,
+  addUser,
 };

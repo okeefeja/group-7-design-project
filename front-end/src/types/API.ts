@@ -25,11 +25,18 @@ type WorkoutProgramForPOST = {
   exercises: number[];
 };
 
-interface CustomHeaderProps {
-  title: string;
-  userName: string;
-  profilePic: ImageSourcePropType;
-}
+type NewUser = {
+  id: string;
+  username: string;
+  email: string;
+};
+
+type User = {
+  id: string;
+  username: string;
+  email: string;
+  workout_programs: { id: number; name: string }[];
+};
 
 type FilterButtonProps = {
   label: string;
@@ -44,6 +51,7 @@ export type {
   WorkoutProgramForPOST,
   Exercises,
   ExerciseList,
-  CustomHeaderProps,
+  NewUser,
+  User,
   FilterButtonProps,
 };

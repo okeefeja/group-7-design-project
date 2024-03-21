@@ -25,7 +25,6 @@ export default function CardList({ data, action }: CardListProps) {
         {data &&
           data.map((cardData: any) => {
             if (isWorkoutProgram(cardData)) {
-              console.log(cardData)
               return (
                 <WorkoutProgramCard
                   title={cardData.name}

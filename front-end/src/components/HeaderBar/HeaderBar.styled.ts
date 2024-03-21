@@ -1,12 +1,22 @@
+import styled from "styled-components/native";
 import { StyleSheet } from "react-native";
+
+export const ScHeaderContainer = styled.View`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #111;
+  padding: 70px 20px 20px 20px;
+  justify-content: space-between;
+`;
 
 export const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between", // Aligns children with space between them
-    paddingBottom : 20,
-    paddingTop : 50,
+    paddingBottom: 20,
+    paddingTop: 50,
     paddingHorizontal: 20, // Fixed padding for mobile
     backgroundColor: "#1a1a1a",
   },
@@ -15,7 +25,7 @@ export const styles = StyleSheet.create({
     width: 50, // Fixed width for mobile
     height: 50, // Fixed height for mobile
     borderRadius: 25, // Ensure this is half of width/height
-    backgroundColor : "#ff8610",
+    backgroundColor: "#ff8610",
   },
   title: {
     top: 10,
@@ -33,5 +43,4 @@ export const styles = StyleSheet.create({
     color: "#ff8610",
     alignSelf: "center",
   },
-
 });
