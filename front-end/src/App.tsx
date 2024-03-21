@@ -1,4 +1,6 @@
-{/* Release 1 */}
+{
+  /* Release 1 */
+}
 
 import React, { useCallback, useEffect, useState } from "react";
 import "./App.css";
@@ -11,14 +13,14 @@ import CustomHeader from "./components/HeaderBar/HeaderBar";
 import HeaderLogo from "../assets/HeaderLogo.png";
 import { LogBox } from 'react-native';
 import MyTabs from "./components/NavigationBar/NavigationBar";
+import AddWorkoutProgramScreen from "./screens/AddWorkoutProgramScreen/AddWorkoutProgramScreen";
 
-LogBox.ignoreLogs(['Warning: ...']);
+LogBox.ignoreLogs(["Warning: ..."]);
 LogBox.ignoreAllLogs(true);
 
 const Stack = createStackNavigator();
 
 export default function App() {
-
   return (
     <NavigationContainer>
       {/* <Stack.Navigator initialRouteName="BrowseWorkoutPrograms"> */}

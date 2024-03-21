@@ -6,7 +6,7 @@ import { WorkoutProgram } from "../../types/API";
 import { fetchWorkoutProgramById } from "../../services/API";
 import { ScBaseContainer } from "../../components/BaseContainer/BaseContainer.styled";
 import WorkoutProgressBar from "../../components/WorkoutProgressBar/WorkoutProgressBar";
-import WorkoutDescriptor from "../../components/WorkoutDescriptor/Descriptor";
+import WorkoutDescriptor from "../../components/Descriptor/Descriptor";
 import Spacer from "../../components/Spacer/Spacer";
 
 interface WorkoutProgramScreenProps {
