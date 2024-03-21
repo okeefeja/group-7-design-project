@@ -8,12 +8,16 @@ import {
 import CardList from "../../components/CardList/CardList";
 import WorkoutCard from "../../components/WorkoutProgramCard/WorkoutProgramCard";
 import { ScBaseContainer } from "../../components/BaseContainer/BaseContainer.styled";
-import { navigateToWorkoutProgram } from "../../services/navigationUtils";
+import {
+  navigateToAddWorkoutProgram,
+  navigateToWorkoutProgram,
+} from "../../services/navigationUtils";
 import Descriptor from "../../components/Descriptor/Descriptor";
 import Spacer from "../../components/Spacer/Spacer";
 import FilterList from "../../components/FilterList/FilterList";
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import { View } from "react-native";
+import TextButton from "../../components/Buttons/TextButton/TextButton";
 
 interface BrowseProgramScreenProps {
   navigation: any;
@@ -75,6 +79,10 @@ export default function BrowseProgramScreen({
     }
   }
 
+  function handleAddProgram() {
+    navigateToAddWorkoutProgram(navigation);
+  }
+
   useEffect(() => {
     getWorkoutProgram();
     getBodyParts();
@@ -98,10 +106,16 @@ export default function BrowseProgramScreen({
         title="Workout Programs"
         description="Browse here for your new favorite workout program!"
       />
+      <Spacer size={2} orientation="vertical" />
+
       <FilterList filters={bodyParts} onFilterSelect={handleFilterSelect} />
-      <Spacer size={4} orientation="vertical" />
+      <Spacer size={3} orientation="vertical" />
+      <TextButton
+        label="+ Add your own workout program"
+        onClick={handleAddProgram}
+      />
+      <Spacer size={3} orientation="vertical" />
       <CardList data={workoutPrograms} action={onPressHandler} />
     </ScBaseContainer>
-    
   );
 }

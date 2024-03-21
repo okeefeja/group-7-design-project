@@ -7,24 +7,39 @@ import { View, Text } from "react-native";
 import Descriptor from "../../components/Descriptor/Descriptor";
 import UserInput from "../../components/UserInput/UserInput";
 import Spacer from "../../components/Spacer/Spacer";
-import { ExerciseList, WorkoutProgramForPOST } from "../../types/API";
-import { addWorkoutProgram, fetchAllExercises } from "../../services/API";
+import { ExerciseList, User, WorkoutProgramForPOST } from "../../types/API";
+import {
+  addWorkoutProgram,
+  fetchAllExercises,
+  fetchUserById,
+} from "../../services/API";
 import ExerciseListSmall from "../../components/ExerciseListSmall/ExerciseListSmall";
 import SubmitButton from "../../components/Buttons/SubmitButton/SubmitButton";
 import CancelButton from "../../components/Buttons/CancelButton/CancelButton";
 import TextButton from "../../components/Buttons/TextButton/TextButton";
+import { getAuth } from "firebase/auth";
+import { navigateToBrowseWorkoutPrograms } from "../../services/navigationUtils";
 
-export default function AddWorkoutProgramScreen() {
+export default function AddWorkoutProgramScreen({ navigation }: any) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [exercises, setExercises] = useState<ExerciseList | null>(null);
   const [error, setError] = useState(false);
   const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
+  const [user, setUser] = useState<string>("");
   const workoutProgram: WorkoutProgramForPOST = {
     name: name,
     description: description,
     exercises: selectedExercises,
+    owner: user,
   };
+
+  async function getUser() {
+    const auth = getAuth();
+    if (auth.currentUser) {
+      setUser(auth.currentUser.uid);
+    }
+  }
 
   async function getExercises() {
     const fetchedExercises: ExerciseList | null = await fetchAllExercises();
@@ -51,11 +66,14 @@ export default function AddWorkoutProgramScreen() {
 
   function handleSubmit() {
     addWorkoutProgram(workoutProgram);
+    navigateToBrowseWorkoutPrograms(navigation);
   }
 
   useEffect(() => {
     getExercises();
+    getUser();
   }, []);
+
   return (
     <ScBaseContainerScroll>
       <Descriptor title="Add workout program" />

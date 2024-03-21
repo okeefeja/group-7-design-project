@@ -10,8 +10,8 @@ export function navigateToWorkoutProgram(
 export function navigateToBrowseWorkoutPrograms(
   navigation: NavigationProp<any>
 ) {
-  navigation.navigate('Main', {
-    screen: 'BrowseProgramScreen', 
+  navigation.navigate("Main", {
+    screen: "BrowseProgramScreen",
   });
 }
 
@@ -19,3 +19,6 @@ export function navigateToLogIn(navigation: NavigationProp<any>) {
   navigation.navigate("LoginScreen");
 }
 
+export function navigateToAddWorkoutProgram(navigation: NavigationProp<any>) {
+  navigation.navigate("AddWorkoutProgramScreen");
+}
