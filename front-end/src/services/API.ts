@@ -92,4 +92,5 @@ export {
   fetchBodyParts,
   fetchAllExercises,
   addWorkoutProgram,
+  information-page
 };

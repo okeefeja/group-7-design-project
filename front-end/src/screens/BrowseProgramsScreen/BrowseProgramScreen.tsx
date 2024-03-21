@@ -9,7 +9,7 @@ import CardList from "../../components/CardList/CardList";
 import WorkoutCard from "../../components/WorkoutProgramCard/WorkoutProgramCard";
 import { ScBaseContainer } from "../../components/BaseContainer/BaseContainer.styled";
 import { navigateToWorkoutProgram } from "../../services/navigationUtils";
-import Descriptor from "../../components/WorkoutDescriptor/Descriptor";
+import Descriptor from "../../components/Descriptor/Descriptor";
 import Spacer from "../../components/Spacer/Spacer";
 import FilterList from "../../components/FilterList/FilterList";
 
@@ -77,9 +77,6 @@ export default function BrowseProgramScreen({
     getWorkoutProgram();
     getBodyParts();
   }, []);
-
-  console.log("FILTERS", filterOptions);
-  console.log("WorkoutPrograms: ", workoutPrograms);
 
   function filterWorkoutProgramsByBodyParts(filteringOptions: string[]) {
     if (workoutPrograms) {

@@ -8,7 +8,7 @@ const ScDecriptorContainer = styled.View`
 `;
 
 const ScTitleText = styled.Text`
-  width: 275px;
+  width: 300px;
   font-size: 52px;
   font-weight: 700;
   color: #ff8610;
