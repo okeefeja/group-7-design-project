@@ -38,6 +38,15 @@ export default function App() {
         name="WorkoutProgram"
         component={WorkoutProgramScreen}
       />
+        <Stack.Screen
+          name="WorkoutProgram"
+          component={WorkoutProgramScreen}
+          // Add our own Header component later
+        />
+        <Stack.Screen
+          name="AddWorkoutProgramScreen"
+          component={AddWorkoutProgramScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
