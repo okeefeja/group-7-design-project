@@ -196,11 +196,12 @@ def get_workout_programs():
 
     return jsonify(programs_list)
 
-@app.route('/workout_programs/filtered/<filters>')
+@app.route('/workout_programs/filtered/<string:filters>')
 @cross_origin(origin="*")
 def get_filtered_workout_programs(filters):
+    filterList = filters.split(",")
     workout_programs = db.session.query(
-        WorkoutProgram
+    WorkoutProgram
         ).join(
             ExercisesToWorkoutPrograms
             ).join(
@@ -209,8 +210,9 @@ def get_filtered_workout_programs(filters):
                     MusclesToExercises
                     ).join(
                         Muscle
-                        ).join(BodyPart).filter(BodyPart.id.in_(filters)).all()
+                        ).join(BodyPart).filter(BodyPart.id.in_(filterList)).all()
     programs_list = []
+
     for program in workout_programs:
         exercises_list = []
         body_parts_set = set()  # Using a set to ensure unique body parts across all exercises
