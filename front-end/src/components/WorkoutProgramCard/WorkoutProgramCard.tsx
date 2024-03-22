@@ -3,12 +3,17 @@ import {
   ScCardContainer,
   ScDescriptionText,
   ScMuscleText,
+  ScOwnerText,
   ScTitleText,
 } from "./WorkoutProgramCard.styled";
 import { BodyPartList, ExerciseList } from "../../types/API";
+import { View } from "react-native";
+import Icon from "react-native-vector-icons/Ionicons";
+import Spacer from "../Spacer/Spacer";
 
 interface WorkoutProgramCardProps {
   title: string;
+  owner: string;
   description: string;
   bodyParts: BodyPartList;
   action: () => void;
@@ -16,6 +21,7 @@ interface WorkoutProgramCardProps {
 
 export default function WorkoutProgramCard({
   title,
+  owner,
   description,
   bodyParts,
   action,
@@ -36,7 +42,26 @@ export default function WorkoutProgramCard({
   }, []);
   return (
     <ScCardContainer onPress={action}>
-      <ScMuscleText>{bodyPartString}</ScMuscleText>
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <ScMuscleText>{bodyPartString}</ScMuscleText>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <Icon name="person" color="gray" size={16} />
+          <Spacer orientation="horizontal" size={1} />
+          <ScOwnerText>{owner}</ScOwnerText>
+        </View>
+      </View>
       <ScTitleText>{title}</ScTitleText>
       <ScDescriptionText>{description}</ScDescriptionText>
     </ScCardContainer>

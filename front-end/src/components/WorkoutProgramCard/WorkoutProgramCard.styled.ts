@@ -21,6 +21,12 @@ const ScMuscleText = styled.Text`
   color: #ff8610;
 `;
 
+const ScOwnerText = styled.Text`
+  font-weight: 700;
+  font-size: 16px;
+  color: gray;
+`;
+
 const ScDescriptionText = styled.Text`
   margin-top: 8px;
   font-weight: 400;
@@ -28,4 +34,10 @@ const ScDescriptionText = styled.Text`
   color: gray;
 `;
 
-export { ScCardContainer, ScTitleText, ScMuscleText, ScDescriptionText };
+export {
+  ScCardContainer,
+  ScTitleText,
+  ScMuscleText,
+  ScOwnerText,
+  ScDescriptionText,
+};

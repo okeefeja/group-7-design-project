@@ -16,7 +16,7 @@ type WorkoutProgram = {
   description: string;
   body_parts: BodyPartList;
   exercises: ExerciseList;
-  owner: string;
+  owner: { id: string; email: string; username: string };
 };
 type WorkoutProgramList = WorkoutProgram[];
 
