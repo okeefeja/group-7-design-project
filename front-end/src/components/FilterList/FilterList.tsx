@@ -7,7 +7,7 @@ import { BodyPartList } from "../../types/API";
 
 interface FilterListProps {
   filters: BodyPartList | null;
-  onFilterSelect: (filter: string) => void;
+  onFilterSelect: (filter: number) => void;
 }
 
 const FilterList: React.FC<FilterListProps> = ({ filters, onFilterSelect }) => {
@@ -20,7 +20,7 @@ const FilterList: React.FC<FilterListProps> = ({ filters, onFilterSelect }) => {
       {filters &&
         filters.map((filter, index) => {
           function handleFilterSelect() {
-            onFilterSelect(filter.name);
+            onFilterSelect(filter.id);
           }
           return (
             <FilterButton

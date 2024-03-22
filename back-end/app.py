@@ -98,6 +98,7 @@ def root():
     return jsonify({
         'tables': table_info,
     })
+ 
 
 @app.route('/body_parts')
 @cross_origin(origin="*")
@@ -202,6 +203,64 @@ def get_workout_programs():
             'body_parts': body_parts_list,
             'exercises': exercises_list,
             'owner': user_list[0]  
+        })
+
+    return jsonify(programs_list)
+
+@app.route('/workout_programs/filtered/<string:filters>')
+@cross_origin(origin="*")
+def get_filtered_workout_programs(filters):
+    filterList = filters.split(",")
+    workout_programs = db.session.query(
+    WorkoutProgram
+        ).join(
+            ExercisesToWorkoutPrograms
+            ).join(
+                Exercise
+                ).join(
+                    MusclesToExercises
+                    ).join(
+                        Muscle
+                        ).join(BodyPart).filter(BodyPart.id.in_(filterList)).all()
+    programs_list = []
+
+    for program in workout_programs:
+        exercises_list = []
+        body_parts_set = set()  # Using a set to ensure unique body parts across all exercises
+
+        for exercise in program.exercises:
+            muscle_groups = []
+
+            # Fetch muscle groups associated with the exercise
+            muscles = MusclesToExercises.query.filter_by(exercise_id=exercise.id).all()
+            for muscle in muscles:
+
+                # Fetch body parts associated with the exercise
+                body_part = BodyPart.query.filter_by(id=muscle.muscle.body_part_id).first()
+                if body_part:
+                    body_parts_set.add(body_part.name)  # Add body part name to the set
+
+                muscle_groups.append({
+                    'id': muscle.muscle.id,
+                    'name': muscle.muscle.name
+                })
+
+            exercises_list.append({
+                'id': exercise.id,
+                'name': exercise.name,
+                'description': exercise.description,
+                'muscle_groups': muscle_groups
+
+            })
+
+        body_parts_list = [{'id': bp.id, 'name': bp.name} for bp in BodyPart.query.filter(BodyPart.name.in_(body_parts_set)).all()]
+
+        programs_list.append({
+            'id': program.id,
+            'name': program.name,
+            'description': program.description,
+            'body_parts': body_parts_list,
+            'exercises': exercises_list
         })
 
     return jsonify(programs_list)
