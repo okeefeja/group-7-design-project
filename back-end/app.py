@@ -163,7 +163,6 @@ def get_workout_programs():
             # Fetch muscle groups associated with the exercise
             muscles = MusclesToExercises.query.filter_by(exercise_id=exercise.id).all()
             for muscle in muscles:
-
                 # Fetch body parts associated with the exercise
                 body_part = BodyPart.query.filter_by(id=muscle.muscle.body_part_id).first()
                 if body_part:
@@ -184,12 +183,25 @@ def get_workout_programs():
 
         body_parts_list = [{'id': bp.id, 'name': bp.name} for bp in BodyPart.query.filter(BodyPart.name.in_(body_parts_set)).all()]
 
+        # Fetch associated users for the workout program
+        users = UsersToWorkoutPrograms.query.filter_by(workout_program_id=program.id).all()
+        user_list = []
+        for user in users:
+            user_data = User.query.get(user.user_id)
+            if user_data:
+                user_list.append({
+                    'id': user_data.id,
+                    'username': user_data.username,
+                    'email': user_data.email
+                })
+
         programs_list.append({
             'id': program.id,
             'name': program.name,
             'description': program.description,
             'body_parts': body_parts_list,
-            'exercises': exercises_list
+            'exercises': exercises_list,
+            'owner': user_list[0]  
         })
 
     return jsonify(programs_list)
@@ -318,6 +330,7 @@ def create_workout_program():
         name = data.get('name')
         description = data.get('description')
         exercises = data.get('exercises')
+        owner = data.get('owner')
 
         # Create the workout program
         new_workout_program = WorkoutProgram(name=name, description=description)
@@ -329,9 +342,13 @@ def create_workout_program():
             exercise = Exercise.query.get(exercise_id)
             if exercise:
                 # Create an instance of the association model and add it to the session
-                association = ExercisesToWorkoutPrograms(workout_program_id=new_workout_program.id, exercise_id=exercise_id)
-                db.session.add(association)
+                ex_wp_association = ExercisesToWorkoutPrograms(workout_program_id=new_workout_program.id, exercise_id=exercise_id)
+                db.session.add(ex_wp_association)
 
+
+        # Create associations between workoutPrograms and users
+        user_wp_association = UsersToWorkoutPrograms(workout_program_id=new_workout_program.id, user_id=owner)
+        db.session.add(user_wp_association)
         db.session.commit()
 
         return jsonify({'message': 'Workout program created successfully!'})
@@ -346,6 +363,9 @@ def create_workout_program():
 def remove_workout_programs(idArray):
     try:
         with app.app_context():
+            # Delete entries from the users_workout_program table
+            db.session.query(UsersToWorkoutPrograms).filter(UsersToWorkoutPrograms.workout_program_id.in_(idArray)).delete(synchronize_session=False)
+
             # Delete entries from the exercisesToWorkoutPrograms table
             db.session.query(ExercisesToWorkoutPrograms).filter(ExercisesToWorkoutPrograms.workout_program_id.in_(idArray)).delete(synchronize_session=False)
 
@@ -355,7 +375,7 @@ def remove_workout_programs(idArray):
             # Commit the changes
             db.session.commit()
 
-            print('Workout programs removed successfully!')
+            print('Workout programs and associated relations removed successfully!')
 
     except Exception as e:
         # Handle errors
@@ -380,5 +400,6 @@ def remove_users(idArray):
         # Handle errors
         print('Error occurred:', e)
     
+
 if __name__ == '__main__':
         app.run(debug=True, host="0.0.0.0", port="5000")

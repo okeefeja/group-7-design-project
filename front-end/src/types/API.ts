@@ -16,6 +16,7 @@ type WorkoutProgram = {
   description: string;
   body_parts: BodyPartList;
   exercises: ExerciseList;
+  owner: { id: string; email: string; username: string };
 };
 type WorkoutProgramList = WorkoutProgram[];
 
@@ -23,6 +24,7 @@ type WorkoutProgramForPOST = {
   name: string;
   description: string;
   exercises: number[];
+  owner: string;
 };
 
 type NewUser = {

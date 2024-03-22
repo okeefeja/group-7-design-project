@@ -28,6 +28,7 @@ export default function CardList({ data, action }: CardListProps) {
               return (
                 <WorkoutProgramCard
                   title={cardData.name}
+                  owner={cardData.owner.username}
                   description={cardData.description}
                   action={() => action(cardData.id)}
                   bodyParts={cardData.body_parts}
