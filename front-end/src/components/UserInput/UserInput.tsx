@@ -10,6 +10,7 @@ interface UserInputProps {
   setValue: (newValue: string) => void;
   textArea?: boolean;
   password?: boolean;
+  disabled?: boolean;
 }
 
 export default function UserInput({
@@ -19,6 +20,7 @@ export default function UserInput({
   setValue,
   textArea = false,
   password = false,
+  disabled = false,
 }: UserInputProps) {
   const [focused, setFocused] = useState(false);
 
@@ -31,6 +33,7 @@ export default function UserInput({
       <ScTextInput
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
+        editable={disabled ? false : true}
         placeholder={placeholder}
         focus={focused}
         textArea={textArea}

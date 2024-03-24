@@ -62,6 +62,12 @@ class User(db.Model):
     email = db.Column(db.String(50))
     username = db.Column(db.String(50))
     
+class UserPersonalBests(db.Model):
+    __tablename__ = 'user_personal_bests'
+    user_id = db.Column(db.String(100), db.ForeignKey('users.id'), primary_key=True)
+    bench_press = db.Column(db.String(25))
+    squats = db.Column(db.String(25))
+    deadlift = db.Column(db.String(25))
 
 class ExercisesToWorkoutPrograms(db.Model):
     __tablename__ = 'exercises_workout_program'
@@ -319,21 +325,30 @@ def get_users():
         # Fetch users ordered by their first name
         users = db.session.execute(db.select(User).order_by(User.username)).scalars()
 
-        user_text = []
+        user_data_list = []
         for user in users:
-            # For each user, fetch associated workout programs through the UsersToWorkoutPrograms table
+            # Fetch associated workout programs through the UsersToWorkoutPrograms table
             workout_programs = db.session.execute(db.select(WorkoutProgram).join(UsersToWorkoutPrograms).filter(UsersToWorkoutPrograms.user_id == user.id)).scalars()
 
-            # Prepare user data, including their associated workout programs
+            # Fetch user's personal bests data
+            personal_bests = UserPersonalBests.query.get(user.id)
+            personal_bests_data = {
+                'bench_press': personal_bests.bench_press if personal_bests else None,
+                'squats': personal_bests.squats if personal_bests else None,
+                'deadlift': personal_bests.deadlift if personal_bests else None
+            }
+
+            # Prepare user data, including their associated workout programs and personal bests
             user_data = {
                 "id": user.id,
                 "email": user.email,
                 "username": user.username,
-                "workout_programs": [{"id": wp.id,"name": wp.name} for wp in workout_programs]
+                "workout_programs": [{"id": wp.id, "name": wp.name} for wp in workout_programs],
+                "personal_bests": personal_bests_data
             }
-            user_text.append(user_data)
+            user_data_list.append(user_data)
 
-        return jsonify(user_text)
+        return jsonify(user_data_list)
     
     except Exception as e:
         # Handle errors
@@ -349,12 +364,21 @@ def get_user_by_id(user_id):
         if user:
             workout_programs = db.session.execute(db.select(WorkoutProgram).join(UsersToWorkoutPrograms).filter(UsersToWorkoutPrograms.user_id == user.id)).scalars()
 
+            # Fetch user's personal bests data
+            personal_bests = UserPersonalBests.query.get(user.id)
+            personal_bests_data = {
+                'bench_press': personal_bests.bench_press if personal_bests else None,
+                'squats': personal_bests.squats if personal_bests else None,
+                'deadlift': personal_bests.deadlift if personal_bests else None
+            }
+
             # Prepare user data, including their associated workout programs
             user_data = {
                 "id": user.id,
                 "email": user.email,
                 "username": user.username,
-                "workout_programs": [{"id": wp.id,"name": wp.name} for wp in workout_programs]
+                "workout_programs": [{"id": wp.id,"name": wp.name} for wp in workout_programs],
+                "personal_bests": personal_bests_data
             }
             return jsonify(user_data)
         else:
@@ -379,11 +403,68 @@ def create_user():
         db.session.add(new_user)
         db.session.commit()
 
+        # Create entry in UserPersonalBests table for the new user with null values except for user_id
+        new_user_personal_bests = UserPersonalBests(user_id=id)
+        db.session.add(new_user_personal_bests)
+        db.session.commit()
+
         return jsonify({'message': 'User created successfully!'})
     
     except Exception as e:
         # Handle errors
         print('Error occurred:', e)
+
+@app.route('/users/update_personal_bests/<string:user_id>', methods=['PUT'])
+@cross_origin(origin="*")
+def update_personal_bests(user_id):
+    try:
+        data = request.get_json()
+
+        # Extract data from the request
+        bench_press = data.get('bench_press')
+        squats = data.get('squats')
+        deadlift = data.get('deadlift')
+
+        # Retrieve the existing personal bests record for the user
+        user_personal_bests = UserPersonalBests.query.get(user_id)
+
+        # Update the personal bests record if it exists
+        if user_personal_bests:
+            user_personal_bests.bench_press = bench_press
+            user_personal_bests.squats = squats
+            user_personal_bests.deadlift = deadlift
+
+            # Commit the changes to the database
+            db.session.commit()
+
+            return jsonify({'message': 'Personal bests updated successfully!'})
+        else:
+            return jsonify({'message': 'User not found'}), 404  # Return 404 Not Found if user is not found
+
+    except Exception as e:
+        # Handle errors
+        print('Error occurred:', e)
+        return jsonify({'message': 'An error occurred while updating personal bests'}), 500
+
+@app.route('/users/update_username/<string:user_id>', methods=['PUT'])
+@cross_origin(origin="*")
+def update_username(user_id):
+    try:
+        # Get the new username from the request body
+        data = request.get_json()
+        new_username = data.get('username')
+
+        # Fetch the user by user_id
+        user = User.query.get(user_id)
+        if user:
+            # Update the user's username
+            user.username = new_username
+            db.session.commit()
+            return jsonify({'message': 'Username updated successfully'})
+        else:
+            return jsonify({'message': 'User not found'}), 404
+    except Exception as e:
+        return jsonify({'message': 'An error occurred while updating username'}), 500
 
 @app.route('/workout_programs/add', methods=['POST'])
 @cross_origin(origin="*")
@@ -450,6 +531,9 @@ def remove_workout_programs(idArray):
 def remove_users(idArray):
     try:
         with app.app_context():
+            # Delete entries from the UserPersonalBests table for the provided userId
+            db.session.query(UserPersonalBests).filter(UserPersonalBests.user_id.in_(idArray)).delete(synchronize_session=False)
+
             # Delete entries from the users table
             db.session.query(User).filter(User.id.in_(idArray)).delete(synchronize_session=False)
 
@@ -459,7 +543,7 @@ def remove_users(idArray):
             # Commit the changes
             db.session.commit()
 
-            print('Users removed successfully!')
+            print('Users and associated personal bests removed successfully!')
 
     except Exception as e:
         # Handle errors

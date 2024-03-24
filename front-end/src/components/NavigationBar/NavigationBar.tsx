@@ -31,22 +31,22 @@ function MyTabs() {
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="person" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tab.Screen
         name="Information"
         component={ExerciseInformationScreen}
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Icon name="information-sharp" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="person" color={color} size={size} />
           ),
         }}
       />

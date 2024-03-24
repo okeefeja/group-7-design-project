@@ -15,6 +15,8 @@ import { LogBox } from "react-native";
 import MyTabs from "./components/NavigationBar/NavigationBar";
 import AddWorkoutProgramScreen from "./screens/AddWorkoutProgramScreen/AddWorkoutProgramScreen";
 import ExerciseInformationScreen from "./screens/InformationPage/ExerciseInformationScreen";
+import ProfileScreen from "./screens/ProfileScreen/ProfileScreen";
+import EditProfileScreen from "./screens/EditProfileScreen/EditProfileScreen";
 
 LogBox.ignoreLogs(["expo-font"]);
 
@@ -23,7 +25,6 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      {/* <Stack.Navigator initialRouteName="BrowseWorkoutPrograms"> */}
       <Stack.Navigator initialRouteName="LoginScreen">
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen
@@ -41,6 +42,7 @@ export default function App() {
           name="AddWorkoutProgramScreen"
           component={AddWorkoutProgramScreen}
         />
+        <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

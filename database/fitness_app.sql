@@ -71,6 +71,14 @@ CREATE TABLE users_workout_program (
     FOREIGN KEY (workout_program_id) REFERENCES workout_programs(id)
 );
 
+CREATE TABLE user_personal_bests (
+    user_id VARCHAR(100),
+    bench_press VARCHAR(25),
+    squats VARCHAR(25),
+    deadlift VARCHAR(25),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 -- Add records to the body parts table
 INSERT INTO body_parts (name)
 VALUES ('Arms'), 
@@ -331,3 +339,6 @@ INSERT INTO users (id, email, username)
 -- Add records to users_workout_program table
 INSERT INTO users_workout_program (user_id, workout_program_id) 
     VALUES ("UBxFAkGnd6Yw7tWpjALg0RvKYYp1",1), ("UBxFAkGnd6Yw7tWpjALg0RvKYYp1", 2), ("UBxFAkGnd6Yw7tWpjALg0RvKYYp1", 3);
+    
+INSERT INTO user_personal_bests (user_id, bench_press, squats, deadlift) 
+    VALUES ("UBxFAkGnd6Yw7tWpjALg0RvKYYp1","80kg", "130kg", "140kg");

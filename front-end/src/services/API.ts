@@ -29,7 +29,9 @@ async function fetchFilteredWorkoutPrograms(
   filters: Array<number>
 ): Promise<WorkoutProgramList | null> {
   try {
-    const response = await fetch(`${baseURL}/workout_programs/filtered/${filters}`);
+    const response = await fetch(
+      `${baseURL}/workout_programs/filtered/${filters}`
+    );
     if (response.ok) {
       const data: WorkoutProgramList = await response.json();
       return data;
@@ -136,6 +138,51 @@ async function addUser(user: NewUser) {
   }
 }
 
+async function updateUserPersonalBests(
+  userId: string,
+  personalBests: {
+    bench_press: string | null;
+    squats: string | null;
+    deadlift: string | null;
+  }
+): Promise<boolean> {
+  try {
+    const response = await fetch(
+      `${baseURL}/users/update_personal_bests/${userId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(personalBests),
+      }
+    );
+    return response.ok;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
+async function updateUsername(
+  userId: string,
+  username: string
+): Promise<boolean> {
+  try {
+    const response = await fetch(`${baseURL}/users/update_username/${userId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username: username }),
+    });
+    return response.ok;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
 export {
   fetchAllWorkoutPrograms,
   fetchFilteredWorkoutPrograms,
@@ -145,4 +192,6 @@ export {
   addWorkoutProgram,
   fetchUserById,
   addUser,
+  updateUserPersonalBests,
+  updateUsername,
 };
