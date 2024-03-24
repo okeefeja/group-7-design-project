@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { fetchAllWorkoutPrograms, fetchBodyParts, fetchFilteredWorkoutPrograms } from "../../services/API";
+import {
+  fetchAllWorkoutPrograms,
+  fetchBodyParts,
+  fetchFilteredWorkoutPrograms,
+} from "../../services/API";
 import {
   BodyPartList,
   WorkoutProgram,
@@ -43,7 +47,9 @@ export default function BrowseProgramScreen({
     }
   }
 
-  async function getFilteredWorkoutProgram(filterIds:Array<number>): Promise<void> {
+  async function getFilteredWorkoutProgram(
+    filterIds: Array<number>
+  ): Promise<void> {
     const fetchedWorkoutPrograms: WorkoutProgramList | null =
       await fetchFilteredWorkoutPrograms(filterIds);
 
@@ -95,18 +101,6 @@ export default function BrowseProgramScreen({
     getWorkoutProgram();
     getBodyParts();
   }, []);
-
-  //function filterWorkoutProgramsByBodyParts(filteringOptions: string[]) {
-  //  if (workoutPrograms) {
-  //    return [...workoutPrograms].filter((program) =>
-  //      program.body_parts.every((bodyPart) =>
-  //        filteringOptions.includes(bodyPart.name)
-  //      )
-  //    );
-  //  } else {
-  //    return workoutPrograms;
-  //  }
-  //}
 
   return (
     <ScBaseContainer>
