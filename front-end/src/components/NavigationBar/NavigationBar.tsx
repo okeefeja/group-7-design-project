@@ -7,6 +7,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import tabBarStyles from "./NavigationBar.styled";
 import InformationScreen from "../../screens/InformationPage/InformationScreen";
 import { LogBox } from "react-native";
+import ExerciseInformationScreen from "../../screens/InformationPage/ExerciseInformationScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -41,7 +42,7 @@ function MyTabs() {
       />
       <Tab.Screen
         name="Information"
-        component={InformationScreen}
+        component={ExerciseInformationScreen}
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (

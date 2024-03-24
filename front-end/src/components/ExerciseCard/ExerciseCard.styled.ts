@@ -6,6 +6,7 @@ const ScCardContainer = styled.TouchableOpacity<{ clicked: boolean }>`
   border-radius: 12px;
   font-family: "Roboto";
   background-color: ${(props) => (props.clicked ? "#49CB00" : "#111111")};
+  border: 2px solid ${(props) => (props.clicked ? "#49CB00" : "#303030")};
 `;
 
 const ScTitleText = styled.Text<{ clicked: boolean }>`

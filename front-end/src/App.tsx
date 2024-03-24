@@ -14,6 +14,7 @@ import HeaderLogo from "../assets/HeaderLogo.png";
 import { LogBox } from "react-native";
 import MyTabs from "./components/NavigationBar/NavigationBar";
 import AddWorkoutProgramScreen from "./screens/AddWorkoutProgramScreen/AddWorkoutProgramScreen";
+import ExerciseInformationScreen from "./screens/InformationPage/ExerciseInformationScreen";
 
 LogBox.ignoreLogs(["expo-font"]);
 
