@@ -211,17 +211,11 @@ def get_workout_programs():
 @cross_origin(origin="*")
 def get_filtered_workout_programs(filters):
     filterList = filters.split(",")
-    workout_programs = db.session.query(
-    WorkoutProgram
-        ).join(
-            ExercisesToWorkoutPrograms
-            ).join(
-                Exercise
-                ).join(
-                    MusclesToExercises
-                    ).join(
-                        Muscle
-                        ).join(BodyPart).filter(BodyPart.id.in_(filterList)).all()
+    workout_programs = db.session.query(WorkoutProgram).join(
+        ExercisesToWorkoutPrograms).join(
+        Exercise).join(
+        MusclesToExercises).join(
+        Muscle).join(BodyPart).filter(BodyPart.id.in_(filterList)).all()
     programs_list = []
 
     for program in workout_programs:
@@ -234,7 +228,6 @@ def get_filtered_workout_programs(filters):
             # Fetch muscle groups associated with the exercise
             muscles = MusclesToExercises.query.filter_by(exercise_id=exercise.id).all()
             for muscle in muscles:
-
                 # Fetch body parts associated with the exercise
                 body_part = BodyPart.query.filter_by(id=muscle.muscle.body_part_id).first()
                 if body_part:
@@ -255,12 +248,25 @@ def get_filtered_workout_programs(filters):
 
         body_parts_list = [{'id': bp.id, 'name': bp.name} for bp in BodyPart.query.filter(BodyPart.name.in_(body_parts_set)).all()]
 
+        # Fetch associated users for the workout program
+        users = UsersToWorkoutPrograms.query.filter_by(workout_program_id=program.id).all()
+        user_list = []
+        for user in users:
+            user_data = User.query.get(user.user_id)
+            if user_data:
+                user_list.append({
+                    'id': user_data.id,
+                    'username': user_data.username,
+                    'email': user_data.email
+                })
+
         programs_list.append({
             'id': program.id,
             'name': program.name,
             'description': program.description,
             'body_parts': body_parts_list,
-            'exercises': exercises_list
+            'exercises': exercises_list,
+            'owner': user_list[0]
         })
 
     return jsonify(programs_list)
