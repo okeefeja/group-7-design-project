@@ -22,3 +22,7 @@ export function navigateToLogIn(navigation: NavigationProp<any>) {
 export function navigateToAddWorkoutProgram(navigation: NavigationProp<any>) {
   navigation.navigate("AddWorkoutProgramScreen");
 }
+
+export function navigateToEditProfile(navigation: NavigationProp<any>) {
+  navigation.navigate("EditProfileScreen");
+}

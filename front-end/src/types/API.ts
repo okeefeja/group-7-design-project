@@ -38,6 +38,11 @@ type User = {
   username: string;
   email: string;
   workout_programs: { id: number; name: string }[];
+  personal_bests: {
+    bench_press: string | null;
+    squats: string | null;
+    deadlift: string | null;
+  };
 };
 
 type FilterButtonProps = {

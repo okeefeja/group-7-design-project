@@ -16,6 +16,7 @@ interface WorkoutProgramCardProps {
   owner: string;
   description: string;
   bodyParts: BodyPartList;
+  size?: "small" | "large";
   action: () => void;
 }
 
@@ -24,6 +25,7 @@ export default function WorkoutProgramCard({
   owner,
   description,
   bodyParts,
+  size = "large",
   action,
 }: WorkoutProgramCardProps) {
   const [bodyPartString, setBodyPartString] = useState("");
@@ -41,7 +43,7 @@ export default function WorkoutProgramCard({
     createBodyPartString();
   }, []);
   return (
-    <ScCardContainer onPress={action}>
+    <ScCardContainer onPress={action} size={size}>
       <View
         style={{
           display: "flex",
@@ -49,7 +51,7 @@ export default function WorkoutProgramCard({
           justifyContent: "space-between",
         }}
       >
-        <ScMuscleText>{bodyPartString}</ScMuscleText>
+        <ScMuscleText size={size}>{bodyPartString}</ScMuscleText>
         <View
           style={{
             display: "flex",
@@ -59,11 +61,11 @@ export default function WorkoutProgramCard({
         >
           <Icon name="person" color="gray" size={16} />
           <Spacer orientation="horizontal" size={1} />
-          <ScOwnerText>{owner}</ScOwnerText>
+          <ScOwnerText size={size}>{owner}</ScOwnerText>
         </View>
       </View>
-      <ScTitleText>{title}</ScTitleText>
-      <ScDescriptionText>{description}</ScDescriptionText>
+      <ScTitleText size={size}>{title}</ScTitleText>
+      <ScDescriptionText size={size}>{description}</ScDescriptionText>
     </ScCardContainer>
   );
 }
