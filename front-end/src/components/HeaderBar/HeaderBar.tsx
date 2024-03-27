@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { ScHeaderContainer, styles } from "./HeaderBar.styled";
 import TextButton from "../Buttons/TextButton/TextButton";
 import Spacer from "../Spacer/Spacer";
 import { getAuth } from "firebase/auth";
 import { User } from "../../types/API";
 import { fetchUserById } from "../../services/API";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 interface CustomHeaderProps {
   username: string;
   navigation: any;
+  showBackButton?: boolean;
+  showHeaderInfo?: boolean;
 }
 
 const CustomHeader: React.FC<CustomHeaderProps> = ({
   username,
   navigation,
+  showBackButton = false,
+  showHeaderInfo = true
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState(false);
@@ -50,10 +55,18 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
   }, []);
   return (
     <ScHeaderContainer>
+
+
       <View
         style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
       >
-        {user ? (
+
+      {showBackButton && (
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={28} color="#ff8610" /> 
+        </TouchableOpacity>
+      )}
+        {user && showHeaderInfo ? (
           <>
             <View
               style={{
@@ -68,13 +81,14 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
               {user.username}
             </Text>
           </>
-        ) : (
+        ) : showHeaderInfo && (
           <Text style={{ color: "white", fontSize: 22, fontWeight: "600" }}>
             Loading...
           </Text>
         )}
       </View>
-      <TextButton label="Sign out" onClick={handleSignOut} />
+      {showHeaderInfo &&
+      <TextButton label="Sign out" onClick={handleSignOut} />}
     </ScHeaderContainer>
   );
 };
