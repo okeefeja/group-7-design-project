@@ -11,6 +11,7 @@ import {
   fetchAllWorkoutPrograms,
   fetchUserById,
   updateUserPersonalBests,
+  fetchFavoriteWorkoutPrograms,
 } from "../../services/API";
 import { User, WorkoutProgramList } from "../../types/API";
 import UserDescriptor from "../../components/UserDescriptor/UserDescriptor";
@@ -39,6 +40,8 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [error, setError] = useState(false);
   const auth = getAuth();
 
+  const [favoriteWorkouts, setFavoriteWorkouts] = useState<WorkoutProgramList | null>(null);
+
   function handleNavigation(id: number) {
     navigateToWorkoutProgram(navigation, id);
   }
@@ -48,6 +51,18 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
     if (fetchedWorkoutPrograms) {
       setWorkoutPrograms(fetchedWorkoutPrograms);
+    } else {
+      setError(true);
+    }
+  }
+
+  async function getFavoriteWorkoutProgram()  {
+    const userId = auth.currentUser?.uid;
+    const fetchedWorkoutPrograms: WorkoutProgramList | null =
+      await fetchFavoriteWorkoutPrograms(String(userId));
+
+    if (fetchedWorkoutPrograms) {
+      setFavoriteWorkouts(fetchedWorkoutPrograms);
     } else {
       setError(true);
     }
@@ -83,11 +98,23 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       getUser();
     }
   }
+  
 
   useEffect(() => {
-    getWorkoutProgram();
+    getFavoriteWorkoutProgram();
     getUser();
-  }, []);
+  }, [favoriteWorkouts]);
+
+  useEffect(() => {
+    if (auth.currentUser?.uid) {
+      fetchFavoriteWorkoutPrograms(auth.currentUser.uid)
+        .then(favoriteWorkouts => {
+          if (favoriteWorkouts) {
+            setFavoriteWorkouts(favoriteWorkouts);
+          }
+        });
+    }
+  }, [auth.currentUser?.uid]);
 
   return (
     <ScBaseContainerScroll>
@@ -116,11 +143,11 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             onSubmit={handleSubmit}
           />
           <Spacer orientation="vertical" size={4} />
-          {/* FOR DAVY: Add the fetched favorite workout programs to this lister! */}
-          {workoutPrograms && (
+          
+          {favoriteWorkouts && (
             <WorkoutListSmall
               title="Favorite workouts"
-              workoutPrograms={workoutPrograms}
+              workoutPrograms={favoriteWorkouts}
               onPress={handleNavigation}
             />
           )}

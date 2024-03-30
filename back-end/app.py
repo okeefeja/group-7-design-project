@@ -79,7 +79,12 @@ class MusclesToExercises(db.Model):
     muscle_id = db.Column(db.Integer, db.ForeignKey('muscles.id'), primary_key=True)
     muscle = db.relationship("Muscle", backref=db.backref("muscles", uselist=False))
     exercise_id = db.Column(db.Integer, db.ForeignKey('exercises.id'), primary_key=True)
-    exercise = db.relationship("Exercise", backref=db.backref("exercises", uselist=False))
+    exercise = db.relationship("Exercise", backref=db.backref("exercises", uselist=False))    
+
+class FavoriteWorkouts(db.Model):
+    __tablename__ = 'favorite_workouts'
+    workout_program_id = db.Column(db.Integer, db.ForeignKey('workout_programs.id'), primary_key=True)
+    user_id = db.Column(db.String(100), db.ForeignKey('users.id'), primary_key=True)
 
 class UsersToWorkoutPrograms(db.Model):
     __tablename__ = 'users_workout_program'
@@ -322,29 +327,34 @@ def get_workout_program_by_id(program_id):
 @cross_origin(origin="*")
 def get_users():
     try:
-        # Fetch users ordered by their first name
-        users = db.session.execute(db.select(User).order_by(User.username)).scalars()
-
+        users = User.query.all()  # Fetch all users
         user_data_list = []
+
         for user in users:
             # Fetch associated workout programs through the UsersToWorkoutPrograms table
-            workout_programs = db.session.execute(db.select(WorkoutProgram).join(UsersToWorkoutPrograms).filter(UsersToWorkoutPrograms.user_id == user.id)).scalars()
+            workout_programs_relationships = UsersToWorkoutPrograms.query.filter_by(user_id=user.id).all()
+            workout_programs = [WorkoutProgram.query.get(wp.workout_program_id) for wp in workout_programs_relationships]
 
             # Fetch user's personal bests data
-            personal_bests = UserPersonalBests.query.get(user.id)
-            personal_bests_data = {
-                'bench_press': personal_bests.bench_press if personal_bests else None,
-                'squats': personal_bests.squats if personal_bests else None,
-                'deadlift': personal_bests.deadlift if personal_bests else None
-            }
+            personal_bests = UserPersonalBests.query.filter_by(user_id=user.id).first()
 
-            # Prepare user data, including their associated workout programs and personal bests
+            # Fetch favorite workouts for the user
+            favorite_workouts_ids = [fw.workout_program_id for fw in FavoriteWorkouts.query.filter_by(user_id=user.id).all()]
+            favorite_workouts = [WorkoutProgram.query.get(fw_id) for fw_id in favorite_workouts_ids]
+            favorite_workouts_data = [{"id": fw.id, "name": fw.name, "description": fw.description} for fw in favorite_workouts if fw is not None]
+
+            # Prepare user data, including their associated workout programs, personal bests, and favorite workouts
             user_data = {
                 "id": user.id,
                 "email": user.email,
                 "username": user.username,
-                "workout_programs": [{"id": wp.id, "name": wp.name} for wp in workout_programs],
-                "personal_bests": personal_bests_data
+                "workout_programs": [{"id": wp.id, "name": wp.name, "description": wp.description} for wp in workout_programs if wp is not None],
+                "personal_bests": {
+                    'bench_press': personal_bests.bench_press if personal_bests else None,
+                    'squats': personal_bests.squats if personal_bests else None,
+                    'deadlift': personal_bests.deadlift if personal_bests else None,
+                },
+                "favorite_workouts": favorite_workouts_data
             }
             user_data_list.append(user_data)
 
@@ -352,9 +362,10 @@ def get_users():
     
     except Exception as e:
         # Handle errors
-        error_text = "<p>The error:<br>" + str(e) + "</p>"
+        error_text = f"<p>The error:<br>{e}</p>"
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
+
    
 @app.route('/users/<string:user_id>')
 @cross_origin(origin="*")
@@ -362,30 +373,45 @@ def get_user_by_id(user_id):
     try:
         user = User.query.get(user_id)
         if user:
-            workout_programs = db.session.execute(db.select(WorkoutProgram).join(UsersToWorkoutPrograms).filter(UsersToWorkoutPrograms.user_id == user.id)).scalars()
+            # Fetch workout programs associated with the user
+            workout_programs = db.session.execute(
+                db.select(WorkoutProgram)
+                .join(UsersToWorkoutPrograms)
+                .filter(UsersToWorkoutPrograms.user_id == user.id)
+            ).scalars().all()
 
             # Fetch user's personal bests data
             personal_bests = UserPersonalBests.query.get(user.id)
             personal_bests_data = {
                 'bench_press': personal_bests.bench_press if personal_bests else None,
                 'squats': personal_bests.squats if personal_bests else None,
-                'deadlift': personal_bests.deadlift if personal_bests else None
+                'deadlift': personal_bests.deadlift if personal_bests else None,
             }
 
-            # Prepare user data, including their associated workout programs
+            # Fetch favorite workouts for the user
+            favorite_workouts_ids = db.session.query(FavoriteWorkouts.workout_program_id).filter_by(user_id=user_id).all()
+            favorite_workouts_ids = [fw_id[0] for fw_id in favorite_workouts_ids]  # Flatten the list of tuples
+
+            # You can fetch the details for these favorite workout programs if needed
+            favorite_workouts = WorkoutProgram.query.filter(WorkoutProgram.id.in_(favorite_workouts_ids)).all()
+            favorite_workouts_data = [{"id": fw.id, "name": fw.name, "description": fw.description} for fw in favorite_workouts]
+
+            # Prepare user data, including their associated workout programs and favorite workouts
             user_data = {
                 "id": user.id,
                 "email": user.email,
                 "username": user.username,
-                "workout_programs": [{"id": wp.id,"name": wp.name} for wp in workout_programs],
-                "personal_bests": personal_bests_data
+                "workout_programs": [{"id": wp.id, "name": wp.name} for wp in workout_programs],
+                "favorite_workouts": favorite_workouts_data,
+                "personal_bests": personal_bests_data,
             }
             return jsonify(user_data)
         else:
-            return jsonify({'message': 'User not found'}), 404  # Return 404 Not Found if user is not found
+            return jsonify({'message': 'User not found'}), 404
     except Exception as e:
-        # Handle errors
         print('Error occurred:', e)
+        return jsonify({'message': 'An error occurred'}), 500
+
 
 @app.route('/users/add', methods=['POST'])
 @cross_origin(origin="*")
@@ -504,6 +530,142 @@ def create_workout_program():
         error_text = "<p>The error:<br>" + str(e) + "</p>"
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
+
+@app.route('/users/<string:user_id>/favorite_workouts', methods=['POST'])
+@cross_origin(origin="*")
+def add_favorite_workout(user_id):
+    data = request.get_json()
+    workout_program_id = data.get('workoutProgramId')
+
+    # Check if the workout is already favorited
+    existing_favorite = FavoriteWorkouts.query.filter_by(
+        user_id=user_id,
+        workout_program_id=workout_program_id
+    ).first()
+
+    # Add or remove the favorite based on the is_favorite value
+    if not existing_favorite:
+        # Add to favorites if it's not already there
+        new_favorite = FavoriteWorkouts(
+            user_id=user_id,
+            workout_program_id=workout_program_id
+        )
+        db.session.add(new_favorite)
+    else:
+        # Remove from favorites if it is there
+        db.session.delete(existing_favorite)
+
+    db.session.commit()
+    return jsonify({'message': 'Favorite updated successfully!'}), 200
+
+
+# @app.route('/users/<string:user_id>/favorite_workouts', methods=['GET'])
+# @cross_origin(origin="*")
+# def get_favorite_workouts(user_id):
+#     try:
+#         favorite_workouts = FavoriteWorkouts.query.filter_by(user_id=user_id).all() 
+
+#         programs = []
+#         for i in favorite_workouts : 
+#             programs.append(WorkoutProgram.query.filter_by(id = i.workout_program_id).first())
+        
+#         # Prepare the data for the response
+#         favorite_workouts_data = [{
+#             "id": workout_program.id,
+#             "name": workout_program.name,
+#             "description": workout_program.description
+#         } for workout_program in programs]
+        
+        
+#         return jsonify(favorite_workouts_data), 200
+#     except Exception as e:
+#         print(f"Error fetching favorite workouts for user {user_id}: {e}")
+#         return jsonify({'message': 'An error occurred while fetching favorite workouts'}), 500
+
+@app.route('/users/<string:user_id>/favorite_workouts', methods=['GET'])
+@cross_origin(origin="*")
+def get_favorite_workouts(user_id):
+    try:
+        favorite_workouts = FavoriteWorkouts.query.filter_by(user_id=user_id).all()
+        
+        favorite_programs_list = []
+        for favorite in favorite_workouts:
+            program = WorkoutProgram.query.get(favorite.workout_program_id)
+            if program:
+                exercises_list = []
+                body_parts_set = set()
+
+                for exercise in program.exercises:
+                    muscle_groups = []
+
+                    # Fetch muscle groups associated with the exercise
+                    muscles = MusclesToExercises.query.filter_by(exercise_id=exercise.id).all()
+                    for muscle in muscles:
+                        muscle_detail = Muscle.query.get(muscle.muscle_id)
+                        if muscle_detail:
+                            muscle_groups.append({
+                                'id': muscle_detail.id,
+                                'name': muscle_detail.name
+                            })
+                            body_part = BodyPart.query.get(muscle_detail.body_part_id)
+                            if body_part:
+                                body_parts_set.add(body_part.name)
+
+                    exercises_list.append({
+                        'id': exercise.id,
+                        'name': exercise.name,
+                        'description': exercise.description,
+                        'muscle_groups': muscle_groups
+                    })
+
+                body_parts_list = [{'id': bp.id, 'name': bp.name} for bp in BodyPart.query.filter(BodyPart.name.in_(body_parts_set)).all()]
+                
+                # Fetch the owner of the workout program
+                # Assuming that UsersToWorkoutPrograms table links users and workout programs as owners
+                owner_info = None
+                if users := UsersToWorkoutPrograms.query.filter_by(workout_program_id=program.id).first():
+                    owner = User.query.get(users.user_id)
+                    owner_info = {
+                        'id': owner.id,
+                        'username': owner.username,
+                        'email': owner.email
+                    }
+
+                favorite_programs_list.append({
+                    'id': program.id,
+                    'name': program.name,
+                    'description': program.description,
+                    'body_parts': body_parts_list,
+                    'exercises': exercises_list,
+                    'owner': owner_info  # Add owner information here
+                })
+
+        return jsonify(favorite_programs_list), 200
+    except Exception as e:
+        print(f"Error fetching favorite workouts for user {user_id}: {e}")
+        return jsonify({'message': 'An error occurred while fetching favorite workouts'}), 500
+
+
+
+@app.route('/users/<string:user_id>/favorite_workouts', methods=['DELETE'])
+@cross_origin(origin="*")
+def remove_favorite_workout(user_id):
+    data = request.get_json()
+    workout_program_id = data.get('workoutProgramId')
+    
+    # Find the favorite to be removed
+    favorite_to_remove = FavoriteWorkouts.query.filter_by(
+        user_id=user_id,
+        workout_program_id=workout_program_id
+    ).first()
+
+    if favorite_to_remove:
+        db.session.delete(favorite_to_remove)
+        db.session.commit()
+        return jsonify({'message': 'Favorite removed successfully!'}), 200
+    else:
+        return jsonify({'message': 'Favorite not found'}), 404
+
     
 # takes an array of workout ids to be removed, EX: [1,2]
 def remove_workout_programs(idArray):

@@ -8,7 +8,7 @@ import {
   WorkoutProgramList,
 } from "../types/API";
 
-const baseURL = "http://10.6.85.116:5000";
+export const baseURL = "http://192.168.1.108:5000";
 
 async function fetchAllWorkoutPrograms(): Promise<WorkoutProgramList | null> {
   try {
@@ -24,6 +24,23 @@ async function fetchAllWorkoutPrograms(): Promise<WorkoutProgramList | null> {
     return null;
   }
 }
+
+async function fetchFavoriteWorkoutPrograms(userId: string): Promise<WorkoutProgramList | null> {
+  try {
+    const response = await fetch(`${baseURL}/users/${userId}/favorite_workouts`);
+    if (response.ok) {
+      const data: WorkoutProgramList = await response.json();
+      return data;
+    } else {
+      console.error(`Failed to fetch favorite workouts. Status: ${response.status}`);
+      return null;
+    }
+  } catch (error) {
+    console.error(`Error fetching favorite workouts: ${error}`);
+    return null;
+  }
+}
+
 
 async function fetchFilteredWorkoutPrograms(
   filters: Array<number>
@@ -194,4 +211,5 @@ export {
   addUser,
   updateUserPersonalBests,
   updateUsername,
+  fetchFavoriteWorkoutPrograms,
 };
