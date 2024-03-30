@@ -79,6 +79,13 @@ CREATE TABLE user_personal_bests (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+CREATE TABLE favorite_workouts (
+    workout_program_id INT,
+    user_id VARCHAR(100),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (workout_program_id) REFERENCES workout_programs(id)
+);
+
 -- Add records to the body parts table
 INSERT INTO body_parts (name)
 VALUES ('Arms'), 
@@ -329,7 +336,7 @@ INSERT INTO workout_programs (name, description)
 INSERT INTO exercises_workout_program (workout_program_id, exercise_id)
     VALUES (1, 1), (1, 2), (1, 3), (1, 4), (1, 5),  
            (2, 25), (2, 26), (2, 28), (2, 29), (2, 30), 
-           (3, 60), (3, 61), (3, 62), (3, 63), (3, 64);
+           (3, 60), (3, 61), (3, 62), (3, 63), (3, 64);     
 
         
 -- Add records to users table

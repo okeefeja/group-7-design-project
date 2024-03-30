@@ -52,6 +52,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   }, [auth]);
   return (
     <ScBaseContainerScroll>
+
+      <Spacer orientation="vertical" size={5} />
       <Text style={styles.appTitle}>Fitness App</Text>
       <Text
         style={{
