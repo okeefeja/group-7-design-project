@@ -40,7 +40,8 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [error, setError] = useState(false);
   const auth = getAuth();
 
-  const [favoriteWorkouts, setFavoriteWorkouts] = useState<WorkoutProgramList | null>(null);
+  const [favoriteWorkouts, setFavoriteWorkouts] =
+    useState<WorkoutProgramList | null>(null);
 
   function handleNavigation(id: number) {
     navigateToWorkoutProgram(navigation, id);
@@ -56,7 +57,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     }
   }
 
-  async function getFavoriteWorkoutProgram()  {
+  async function getFavoriteWorkoutProgram() {
     const userId = auth.currentUser?.uid;
     const fetchedWorkoutPrograms: WorkoutProgramList | null =
       await fetchFavoriteWorkoutPrograms(String(userId));
@@ -98,24 +99,25 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       getUser();
     }
   }
-  
 
   useEffect(() => {
     getFavoriteWorkoutProgram();
     getUser();
-  }, [favoriteWorkouts]);
+  }, []);
 
   useEffect(() => {
     if (auth.currentUser?.uid) {
-      fetchFavoriteWorkoutPrograms(auth.currentUser.uid)
-        .then(favoriteWorkouts => {
+      fetchFavoriteWorkoutPrograms(auth.currentUser.uid).then(
+        (favoriteWorkouts) => {
           if (favoriteWorkouts) {
             setFavoriteWorkouts(favoriteWorkouts);
           }
-        });
+        }
+      );
     }
   }, [auth.currentUser?.uid]);
 
+  console.log(favoriteWorkouts);
   return (
     <ScBaseContainerScroll>
       {user && (
@@ -143,12 +145,13 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             onSubmit={handleSubmit}
           />
           <Spacer orientation="vertical" size={4} />
-          
+
           {favoriteWorkouts && (
             <WorkoutListSmall
               title="Favorite workouts"
               workoutPrograms={favoriteWorkouts}
               onPress={handleNavigation}
+              emptyText="Empty! Go find some favorite workouts!"
             />
           )}
           <Spacer orientation="vertical" size={4} />

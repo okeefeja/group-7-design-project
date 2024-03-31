@@ -10,7 +10,6 @@ import {
   WorkoutProgramList,
 } from "../../types/API";
 import CardList from "../../components/CardList/CardList";
-import WorkoutCard from "../../components/WorkoutProgramCard/WorkoutProgramCard";
 import { ScBaseContainer } from "../../components/BaseContainer/BaseContainer.styled";
 import {
   navigateToAddWorkoutProgram,
@@ -20,7 +19,7 @@ import Descriptor from "../../components/Descriptor/Descriptor";
 import Spacer from "../../components/Spacer/Spacer";
 import FilterList from "../../components/FilterList/FilterList";
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
-import { View } from "react-native";
+import { ActivityIndicator } from "react-native";
 import TextButton from "../../components/Buttons/TextButton/TextButton";
 
 interface BrowseProgramScreenProps {
@@ -107,12 +106,12 @@ export default function BrowseProgramScreen({
       <Descriptor
         title="Workout Programs"
         description="Browse here for your new favorite workout program!"
-        showHeartIcon={false} 
-        isLiked={false} 
+        showHeartIcon={false}
+        isLiked={false}
         toggleLike={function (): void {
           throw new Error("Function not implemented.");
-        } }      
-        />
+        }}
+      />
       <Spacer size={2} orientation="vertical" />
 
       <FilterList filters={bodyParts} onFilterSelect={handleFilterSelect} />
