@@ -7,6 +7,7 @@ import Collapser from "../../components/Collapser/Collapser";
 import { Text, View, ActivityIndicator } from "react-native";
 import ExerciseListSmall from "../../components/ExerciseListSmall/ExerciseListSmall";
 import Spacer from "../../components/Spacer/Spacer";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 export default function ExerciseInformationScreen() {
   const [exercises, setExercises] = useState<ExerciseList | null>(null);
@@ -48,24 +49,17 @@ export default function ExerciseInformationScreen() {
         }}
       />
       <Spacer orientation="vertical" size={4} />
-      {devTest ? (
-        exercises && (
-          <ExerciseListSmall
-            exercises={exercises}
-            selectedExercises={selectedExercises}
-            handleClick={handleSelect}
-            type="info"
-          />
-        )
+      {exercises ? (
+        <ExerciseListSmall
+          exercises={exercises}
+          selectedExercises={selectedExercises}
+          handleClick={handleSelect}
+          type="info"
+        />
       ) : (
-        <View style={{ display: "flex", alignItems: "center" }}>
-          <ActivityIndicator size={"large"} color="white" />
-          <Spacer orientation="vertical" size={1} />
-          <Text style={{ color: "white", fontSize: 16 }}>
-            Loading exercises...
-          </Text>
-        </View>
+        <LoadingSpinner text="Loading exercises..." />
       )}
+      <Spacer orientation="vertical" size={5} />
     </ScBaseContainerScroll>
   );
 }

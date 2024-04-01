@@ -323,6 +323,72 @@ def get_workout_program_by_id(program_id):
 
         return jsonify(program_data)
 
+@app.route('/users/<string:user_id>/workout_programs')
+@cross_origin(origin="*")
+def get_workout_programs_by_user(user_id):
+    try:
+        # Fetch workout programs associated with the user
+        user_workout_programs = db.session.query(WorkoutProgram).join(UsersToWorkoutPrograms).filter(UsersToWorkoutPrograms.user_id == user_id).all()
+        
+        programs_list = []
+
+        for program in user_workout_programs:
+            exercises_list = []
+            body_parts_set = set()  # Using a set to ensure unique body parts across all exercises
+
+            for exercise in program.exercises:
+                muscle_groups = []
+
+                # Fetch muscle groups associated with the exercise
+                muscles = MusclesToExercises.query.filter_by(exercise_id=exercise.id).all()
+                for muscle in muscles:
+                    # Fetch body parts associated with the exercise
+                    body_part = BodyPart.query.filter_by(id=muscle.muscle.body_part_id).first()
+                    if body_part:
+                        body_parts_set.add(body_part.name)  # Add body part name to the set
+
+                    muscle_groups.append({
+                        'id': muscle.muscle.id,
+                        'name': muscle.muscle.name
+                    })
+
+                exercises_list.append({
+                    'id': exercise.id,
+                    'name': exercise.name,
+                    'description': exercise.description,
+                    'muscle_groups': muscle_groups
+                })
+
+            body_parts_list = [{'id': bp.id, 'name': bp.name} for bp in BodyPart.query.filter(BodyPart.name.in_(body_parts_set)).all()]
+
+            # Fetch associated users for the workout program
+            users = UsersToWorkoutPrograms.query.filter_by(workout_program_id=program.id).all()
+            user_list = []
+            for user in users:
+                user_data = User.query.get(user.user_id)
+                if user_data:
+                    user_list.append({
+                        'id': user_data.id,
+                        'username': user_data.username,
+                        'email': user_data.email
+                    })
+
+            programs_list.append({
+                'id': program.id,
+                'name': program.name,
+                'description': program.description,
+                'body_parts': body_parts_list,
+                'exercises': exercises_list,
+                'owner': user_list[0]
+            })
+
+        return jsonify(programs_list), 200
+    
+    except Exception as e:
+        print(f"Error fetching workout programs for user {user_id}: {e}")
+        return jsonify({'message': 'An error occurred while fetching workout programs'}), 500
+
+
 @app.route('/users')
 @cross_origin(origin="*")
 def get_users():
@@ -557,30 +623,6 @@ def add_favorite_workout(user_id):
 
     db.session.commit()
     return jsonify({'message': 'Favorite updated successfully!'}), 200
-
-
-# @app.route('/users/<string:user_id>/favorite_workouts', methods=['GET'])
-# @cross_origin(origin="*")
-# def get_favorite_workouts(user_id):
-#     try:
-#         favorite_workouts = FavoriteWorkouts.query.filter_by(user_id=user_id).all() 
-
-#         programs = []
-#         for i in favorite_workouts : 
-#             programs.append(WorkoutProgram.query.filter_by(id = i.workout_program_id).first())
-        
-#         # Prepare the data for the response
-#         favorite_workouts_data = [{
-#             "id": workout_program.id,
-#             "name": workout_program.name,
-#             "description": workout_program.description
-#         } for workout_program in programs]
-        
-        
-#         return jsonify(favorite_workouts_data), 200
-#     except Exception as e:
-#         print(f"Error fetching favorite workouts for user {user_id}: {e}")
-#         return jsonify({'message': 'An error occurred while fetching favorite workouts'}), 500
 
 @app.route('/users/<string:user_id>/favorite_workouts', methods=['GET'])
 @cross_origin(origin="*")

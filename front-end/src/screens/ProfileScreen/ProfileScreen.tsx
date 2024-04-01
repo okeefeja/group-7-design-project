@@ -12,6 +12,7 @@ import {
   fetchUserById,
   updateUserPersonalBests,
   fetchFavoriteWorkoutPrograms,
+  fetchWorkoutProgramsbyUser,
 } from "../../services/API";
 import { User, WorkoutProgramList } from "../../types/API";
 import UserDescriptor from "../../components/UserDescriptor/UserDescriptor";
@@ -35,8 +36,9 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [benchPress, setBenchPress] = useState<string | null>(null);
   const [deadlift, setDeadlift] = useState<string | null>(null);
   const [squats, setSquats] = useState<string | null>(null);
-  const [workoutPrograms, setWorkoutPrograms] =
-    useState<WorkoutProgramList | null>(null);
+  const [userWorkouts, setUserWorkouts] = useState<WorkoutProgramList | null>(
+    null
+  );
   const [error, setError] = useState(false);
   const auth = getAuth();
 
@@ -46,14 +48,16 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   function handleNavigation(id: number) {
     navigateToWorkoutProgram(navigation, id);
   }
-  async function getWorkoutProgram(): Promise<void> {
-    const fetchedWorkoutPrograms: WorkoutProgramList | null =
-      await fetchAllWorkoutPrograms();
+  async function getWorkoutProgramsByUser(): Promise<void> {
+    if (user) {
+      const fetchedWorkoutPrograms: WorkoutProgramList | null =
+        await fetchWorkoutProgramsbyUser(user.id);
 
-    if (fetchedWorkoutPrograms) {
-      setWorkoutPrograms(fetchedWorkoutPrograms);
-    } else {
-      setError(true);
+      if (fetchedWorkoutPrograms) {
+        setUserWorkouts(fetchedWorkoutPrograms);
+      } else {
+        setError(true);
+      }
     }
   }
 
@@ -101,8 +105,9 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   }
 
   useEffect(() => {
-    getFavoriteWorkoutProgram();
     getUser();
+    getFavoriteWorkoutProgram();
+    getWorkoutProgramsByUser();
   }, []);
 
   useEffect(() => {
@@ -117,7 +122,6 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     }
   }, [auth.currentUser?.uid]);
 
-  console.log(favoriteWorkouts);
   return (
     <ScBaseContainerScroll>
       {user && (
@@ -144,6 +148,16 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             setValues={[setBenchPress, setDeadlift, setSquats]}
             onSubmit={handleSubmit}
           />
+          <Spacer orientation="vertical" size={4} />
+
+          {userWorkouts && (
+            <WorkoutListSmall
+              title="My workouts"
+              workoutPrograms={userWorkouts}
+              onPress={handleNavigation}
+              emptyText="Empty! Create some new workouts!"
+            />
+          )}
           <Spacer orientation="vertical" size={4} />
 
           {favoriteWorkouts && (

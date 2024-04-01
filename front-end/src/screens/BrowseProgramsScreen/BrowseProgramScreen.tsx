@@ -19,8 +19,9 @@ import Descriptor from "../../components/Descriptor/Descriptor";
 import Spacer from "../../components/Spacer/Spacer";
 import FilterList from "../../components/FilterList/FilterList";
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
-import { ActivityIndicator } from "react-native";
+import { Text, View } from "react-native";
 import TextButton from "../../components/Buttons/TextButton/TextButton";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 interface BrowseProgramScreenProps {
   navigation: any;
@@ -112,16 +113,25 @@ export default function BrowseProgramScreen({
           throw new Error("Function not implemented.");
         }}
       />
-      <Spacer size={2} orientation="vertical" />
-
+      <Spacer size={3} orientation="vertical" />
       <FilterList filters={bodyParts} onFilterSelect={handleFilterSelect} />
-      <Spacer size={3} orientation="vertical" />
-      <TextButton
-        label="+ Add your own workout program"
-        onClick={handleAddProgram}
-      />
-      <Spacer size={3} orientation="vertical" />
-      <CardList data={workoutPrograms} action={onPressHandler} />
+      <Spacer size={2} orientation="vertical" />
+      {workoutPrograms ? (
+        <>
+          <Text style={{ color: "white", fontSize: 26, fontWeight: "600" }}>
+            Featured workout programs
+          </Text>
+          <TextButton
+            label="+ Add your own workout program"
+            onClick={handleAddProgram}
+          />
+          <Spacer size={2} orientation="vertical" />
+
+          <CardList data={workoutPrograms} action={onPressHandler} />
+        </>
+      ) : (
+        <LoadingSpinner text="Loading workout programs..." />
+      )}
     </ScBaseContainer>
   );
 }

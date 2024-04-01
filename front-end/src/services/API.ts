@@ -47,6 +47,24 @@ async function fetchFavoriteWorkoutPrograms(
   }
 }
 
+async function fetchWorkoutProgramsbyUser(
+  userId: string
+): Promise<WorkoutProgramList | null> {
+  try {
+    const response = await fetch(`${baseURL}/users/${userId}/workout_programs`);
+    if (response.ok) {
+      const data: WorkoutProgramList = await response.json();
+      return data;
+    } else {
+      console.error(`Failed to fetch workouts. Status: ${response.status}`);
+      return null;
+    }
+  } catch (error) {
+    console.error(`Error fetching workouts: ${error}`);
+    return null;
+  }
+}
+
 async function fetchFilteredWorkoutPrograms(
   filters: Array<number>
 ): Promise<WorkoutProgramList | null> {
@@ -217,4 +235,5 @@ export {
   updateUserPersonalBests,
   updateUsername,
   fetchFavoriteWorkoutPrograms,
+  fetchWorkoutProgramsbyUser,
 };

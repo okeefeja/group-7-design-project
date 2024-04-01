@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ScBaseContainerScroll } from "../../components/BaseContainer/BaseContainer.styled";
-import { Text } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import UserDescriptor from "../../components/UserDescriptor/UserDescriptor";
 import {
   getAuth,
@@ -12,12 +12,14 @@ import { fetchUserById, updateUsername } from "../../services/API";
 import { User } from "../../types/API";
 import InputForm from "../../components/InputForm/InputForm";
 import Spacer from "../../components/Spacer/Spacer";
+import * as ImagePicker from "expo-image-picker";
 
 export default function EditProfileScreen() {
   const [user, setUser] = useState<User | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
+  const [image, setImage] = useState<string | null>(null);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -80,15 +82,43 @@ export default function EditProfileScreen() {
     }
   }
 
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
   useEffect(() => {
     getUser();
   }, [error, passwordError]);
+  console.log(image);
   return (
     <ScBaseContainerScroll>
       {user && (
         <>
           <UserDescriptor username={user.username} email={user.email} />
           <Spacer orientation="vertical" size={4} />
+          <TouchableOpacity onPress={pickImage}>
+            <View style={{ backgroundColor: "red", padding: 24 }}>
+              <Text style={{ color: "white" }}>Test</Text>
+            </View>
+          </TouchableOpacity>
+          {image && (
+            <Image
+              source={{ uri: image }}
+              style={{ height: 200, width: 200 }}
+            />
+          )}
           <InputForm
             title="Account information"
             formData={[
