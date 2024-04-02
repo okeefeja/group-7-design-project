@@ -223,6 +223,28 @@ async function updateUsername(
   }
 }
 
+async function updateProfilePic(
+  userId: string,
+  profilePic: string
+): Promise<boolean> {
+  try {
+    const response = await fetch(
+      `${baseURL}/users/${userId}/update_profile_pic`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ profile_pic: profilePic }),
+      }
+    );
+    return response.ok;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
 export {
   fetchAllWorkoutPrograms,
   fetchFilteredWorkoutPrograms,
@@ -236,4 +258,5 @@ export {
   updateUsername,
   fetchFavoriteWorkoutPrograms,
   fetchWorkoutProgramsbyUser,
+  updateProfilePic,
 };

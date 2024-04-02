@@ -61,6 +61,7 @@ class User(db.Model):
     id = db.Column(db.String(100), primary_key=True)
     email = db.Column(db.String(50))
     username = db.Column(db.String(50))
+    profile_pic = db.Column(db.String(255))
     
 class UserPersonalBests(db.Model):
     __tablename__ = 'user_personal_bests'
@@ -414,6 +415,7 @@ def get_users():
                 "id": user.id,
                 "email": user.email,
                 "username": user.username,
+                "profile_pic": user.profile_pic,
                 "workout_programs": [{"id": wp.id, "name": wp.name, "description": wp.description} for wp in workout_programs if wp is not None],
                 "personal_bests": {
                     'bench_press': personal_bests.bench_press if personal_bests else None,
@@ -467,6 +469,7 @@ def get_user_by_id(user_id):
                 "id": user.id,
                 "email": user.email,
                 "username": user.username,
+                "profile_pic": user.profile_pic,
                 "workout_programs": [{"id": wp.id, "name": wp.name} for wp in workout_programs],
                 "favorite_workouts": favorite_workouts_data,
                 "personal_bests": personal_bests_data,
@@ -489,9 +492,10 @@ def create_user():
         id = data.get('id')
         email = data.get('email')
         username = data.get('username')
+        profile_pic = "https://firebasestorage.googleapis.com/v0/b/fitness-app-fd0eb.appspot.com/o/images%2Fdefault.jpeg?alt=media&token=17a85204-9064-49a1-921a-8c187371ad96"
 
         # Create User
-        new_user = User(id=id, email=email, username=username)
+        new_user = User(id=id, email=email, username=username, profile_pic=profile_pic)
         db.session.add(new_user)
         db.session.commit()
 
@@ -708,7 +712,27 @@ def remove_favorite_workout(user_id):
     else:
         return jsonify({'message': 'Favorite not found'}), 404
 
-    
+@app.route('/users/<string:user_id>/update_profile_pic', methods=['PUT'])
+@cross_origin(origin="*")
+def update_profile_pic(user_id):
+    try:
+        data = request.get_json()
+
+        # Extract the new profile picture URL from the request
+        new_profile_pic = data.get('profile_pic')
+
+        # Fetch the user by user_id
+        user = User.query.get(user_id)
+        if user:
+            # Update the user's profile picture
+            user.profile_pic = new_profile_pic
+            db.session.commit()
+            return jsonify({'message': 'Profile picture updated successfully'})
+        else:
+            return jsonify({'message': 'User not found'}), 404
+    except Exception as e:
+        return jsonify({'message': 'An error occurred while updating profile picture'}), 500
+
 # takes an array of workout ids to be removed, EX: [1,2]
 def remove_workout_programs(idArray):
     try:

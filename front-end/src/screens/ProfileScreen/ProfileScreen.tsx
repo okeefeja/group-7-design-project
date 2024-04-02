@@ -141,7 +141,12 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             <Text style={{ color: "gray" }}>Account settings</Text>
           </TouchableOpacity>
           <Spacer orientation="vertical" size={3} />
-          <UserDescriptor email={user.email} username={user.username} />
+          <UserDescriptor
+            email={user.email}
+            username={user.username}
+            profilePic={user.profile_pic}
+            onPress={() => alert("Clicked")}
+          />
           <Spacer orientation="vertical" size={4} />
           <PBInput
             values={[benchPress, deadlift, squats]}

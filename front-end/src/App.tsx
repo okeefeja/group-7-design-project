@@ -17,6 +17,12 @@ import AddWorkoutProgramScreen from "./screens/AddWorkoutProgramScreen/AddWorkou
 import ExerciseInformationScreen from "./screens/InformationPage/ExerciseInformationScreen";
 import ProfileScreen from "./screens/ProfileScreen/ProfileScreen";
 import EditProfileScreen from "./screens/EditProfileScreen/EditProfileScreen";
+import { decode } from "base-64";
+
+// Check if `atob` is undefined, if so, attach `decode` to the global scope
+if (typeof atob === "undefined") {
+  global.atob = decode;
+}
 
 LogBox.ignoreLogs(["expo-font"]);
 

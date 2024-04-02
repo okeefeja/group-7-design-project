@@ -95,14 +95,11 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
           )}
           {user && showUserInfo ? (
             <>
-              <View
-                style={{
-                  height: 35,
-                  width: 35,
-                  backgroundColor: "white",
-                  borderRadius: 999,
-                }}
+              <Image
+                source={{ uri: user.profile_pic }}
+                style={{ height: 35, width: 35, borderRadius: 999 }}
               />
+
               <Spacer orientation="horizontal" size={2} />
               <Text style={{ color: "white", fontSize: 22, fontWeight: "600" }}>
                 {user.username}

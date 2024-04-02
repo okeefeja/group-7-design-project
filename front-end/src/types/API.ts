@@ -37,13 +37,14 @@ type User = {
   id: string;
   username: string;
   email: string;
+  profile_pic: string;
   workout_programs: { id: number; name: string }[];
   personal_bests: {
     bench_press: string | null;
     squats: string | null;
     deadlift: string | null;
   };
-  favoriteWorkouts: {id : number; name: string; description: string}[];
+  favoriteWorkouts: { id: number; name: string; description: string }[];
 };
 
 type FilterButtonProps = {
