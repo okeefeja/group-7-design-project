@@ -21,10 +21,10 @@ export default function ExerciseListSmall({
   handleClick,
 }: ExerciseListSmallProps) {
   const [armsSelected, setArmsSelected] = useState(true);
-  const [backSelected, setBackSelected] = useState(true);
-  const [chestSelected, setChestSelected] = useState(true);
-  const [legsSelected, setLegsSelected] = useState(true);
-  const [shouldersSelected, setShouldersSelected] = useState(true);
+  const [backSelected, setBackSelected] = useState(false);
+  const [chestSelected, setChestSelected] = useState(false);
+  const [legsSelected, setLegsSelected] = useState(false);
+  const [shouldersSelected, setShouldersSelected] = useState(false);
 
   // ARMS, BACK, CHEST, LEGS, SHOULDERS
   const filteredExercises = filterExercisesByBodyPart(exercises);

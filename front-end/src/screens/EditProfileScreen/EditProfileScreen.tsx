@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ScBaseContainerScroll } from "../../components/BaseContainer/BaseContainer.styled";
-import { Text } from "react-native";
+import { Image, Text, TouchableOpacity, View, Platform } from "react-native";
 import UserDescriptor from "../../components/UserDescriptor/UserDescriptor";
 import {
   getAuth,
@@ -8,10 +8,16 @@ import {
   reauthenticateWithCredential,
   updatePassword,
 } from "firebase/auth";
-import { fetchUserById, updateUsername } from "../../services/API";
+import {
+  fetchUserById,
+  updateProfilePic,
+  updateUsername,
+} from "../../services/API";
 import { User } from "../../types/API";
 import InputForm from "../../components/InputForm/InputForm";
 import Spacer from "../../components/Spacer/Spacer";
+import * as ImagePicker from "expo-image-picker";
+import { uploadImage } from "../../../firebaseModel";
 
 export default function EditProfileScreen() {
   const [user, setUser] = useState<User | null>(null);
@@ -80,6 +86,48 @@ export default function EditProfileScreen() {
     }
   }
 
+  const pickImage = async () => {
+    let result: any = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      try {
+        // Convert image URI to Blob
+        const response = await fetch(result.assets[0].uri);
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch image: ${response.status} ${response.statusText}`
+          );
+        }
+        const blob = await response.blob();
+
+        // Call the uploadImage function with user ID and image Blob
+        if (user) {
+          uploadImage(user.id, blob, onUploadSuccess, onUploadError);
+        }
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    }
+  };
+
+  const onUploadSuccess = async (downloadURL: string) => {
+    console.log("Image uploaded successfully!");
+    if (user) {
+      await updateProfilePic(user.id, downloadURL);
+      getUser();
+    }
+  };
+
+  const onUploadError = (error: any) => {
+    console.error("Error uploading image:", error);
+    // You can handle errors here if the image upload fails
+  };
+
   useEffect(() => {
     getUser();
   }, [error, passwordError]);
@@ -87,8 +135,15 @@ export default function EditProfileScreen() {
     <ScBaseContainerScroll>
       {user && (
         <>
-          <UserDescriptor username={user.username} email={user.email} />
+          <UserDescriptor
+            username={user.username}
+            email={user.email}
+            profilePic={user.profile_pic}
+            onPress={pickImage}
+            editable={true}
+          />
           <Spacer orientation="vertical" size={4} />
+
           <InputForm
             title="Account information"
             formData={[
@@ -134,11 +189,6 @@ export default function EditProfileScreen() {
             error={passwordError}
             successMessage="Password succesfully changed!"
           />
-          <Spacer orientation="vertical" size={5} />
-          <Spacer orientation="vertical" size={5} />
-          <Spacer orientation="vertical" size={5} />
-          <Spacer orientation="vertical" size={5} />
-          <Spacer orientation="vertical" size={5} />
           <Spacer orientation="vertical" size={5} />
         </>
       )}

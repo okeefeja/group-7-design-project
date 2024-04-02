@@ -61,6 +61,7 @@ class User(db.Model):
     id = db.Column(db.String(100), primary_key=True)
     email = db.Column(db.String(50))
     username = db.Column(db.String(50))
+    profile_pic = db.Column(db.String(255))
     
 class UserPersonalBests(db.Model):
     __tablename__ = 'user_personal_bests'
@@ -323,6 +324,72 @@ def get_workout_program_by_id(program_id):
 
         return jsonify(program_data)
 
+@app.route('/users/<string:user_id>/workout_programs')
+@cross_origin(origin="*")
+def get_workout_programs_by_user(user_id):
+    try:
+        # Fetch workout programs associated with the user
+        user_workout_programs = db.session.query(WorkoutProgram).join(UsersToWorkoutPrograms).filter(UsersToWorkoutPrograms.user_id == user_id).all()
+        
+        programs_list = []
+
+        for program in user_workout_programs:
+            exercises_list = []
+            body_parts_set = set()  # Using a set to ensure unique body parts across all exercises
+
+            for exercise in program.exercises:
+                muscle_groups = []
+
+                # Fetch muscle groups associated with the exercise
+                muscles = MusclesToExercises.query.filter_by(exercise_id=exercise.id).all()
+                for muscle in muscles:
+                    # Fetch body parts associated with the exercise
+                    body_part = BodyPart.query.filter_by(id=muscle.muscle.body_part_id).first()
+                    if body_part:
+                        body_parts_set.add(body_part.name)  # Add body part name to the set
+
+                    muscle_groups.append({
+                        'id': muscle.muscle.id,
+                        'name': muscle.muscle.name
+                    })
+
+                exercises_list.append({
+                    'id': exercise.id,
+                    'name': exercise.name,
+                    'description': exercise.description,
+                    'muscle_groups': muscle_groups
+                })
+
+            body_parts_list = [{'id': bp.id, 'name': bp.name} for bp in BodyPart.query.filter(BodyPart.name.in_(body_parts_set)).all()]
+
+            # Fetch associated users for the workout program
+            users = UsersToWorkoutPrograms.query.filter_by(workout_program_id=program.id).all()
+            user_list = []
+            for user in users:
+                user_data = User.query.get(user.user_id)
+                if user_data:
+                    user_list.append({
+                        'id': user_data.id,
+                        'username': user_data.username,
+                        'email': user_data.email
+                    })
+
+            programs_list.append({
+                'id': program.id,
+                'name': program.name,
+                'description': program.description,
+                'body_parts': body_parts_list,
+                'exercises': exercises_list,
+                'owner': user_list[0]
+            })
+
+        return jsonify(programs_list), 200
+    
+    except Exception as e:
+        print(f"Error fetching workout programs for user {user_id}: {e}")
+        return jsonify({'message': 'An error occurred while fetching workout programs'}), 500
+
+
 @app.route('/users')
 @cross_origin(origin="*")
 def get_users():
@@ -348,6 +415,7 @@ def get_users():
                 "id": user.id,
                 "email": user.email,
                 "username": user.username,
+                "profile_pic": user.profile_pic,
                 "workout_programs": [{"id": wp.id, "name": wp.name, "description": wp.description} for wp in workout_programs if wp is not None],
                 "personal_bests": {
                     'bench_press': personal_bests.bench_press if personal_bests else None,
@@ -401,6 +469,7 @@ def get_user_by_id(user_id):
                 "id": user.id,
                 "email": user.email,
                 "username": user.username,
+                "profile_pic": user.profile_pic,
                 "workout_programs": [{"id": wp.id, "name": wp.name} for wp in workout_programs],
                 "favorite_workouts": favorite_workouts_data,
                 "personal_bests": personal_bests_data,
@@ -423,9 +492,10 @@ def create_user():
         id = data.get('id')
         email = data.get('email')
         username = data.get('username')
+        profile_pic = "https://firebasestorage.googleapis.com/v0/b/fitness-app-fd0eb.appspot.com/o/images%2Fdefault.jpeg?alt=media&token=17a85204-9064-49a1-921a-8c187371ad96"
 
         # Create User
-        new_user = User(id=id, email=email, username=username)
+        new_user = User(id=id, email=email, username=username, profile_pic=profile_pic)
         db.session.add(new_user)
         db.session.commit()
 
@@ -558,30 +628,6 @@ def add_favorite_workout(user_id):
     db.session.commit()
     return jsonify({'message': 'Favorite updated successfully!'}), 200
 
-
-# @app.route('/users/<string:user_id>/favorite_workouts', methods=['GET'])
-# @cross_origin(origin="*")
-# def get_favorite_workouts(user_id):
-#     try:
-#         favorite_workouts = FavoriteWorkouts.query.filter_by(user_id=user_id).all() 
-
-#         programs = []
-#         for i in favorite_workouts : 
-#             programs.append(WorkoutProgram.query.filter_by(id = i.workout_program_id).first())
-        
-#         # Prepare the data for the response
-#         favorite_workouts_data = [{
-#             "id": workout_program.id,
-#             "name": workout_program.name,
-#             "description": workout_program.description
-#         } for workout_program in programs]
-        
-        
-#         return jsonify(favorite_workouts_data), 200
-#     except Exception as e:
-#         print(f"Error fetching favorite workouts for user {user_id}: {e}")
-#         return jsonify({'message': 'An error occurred while fetching favorite workouts'}), 500
-
 @app.route('/users/<string:user_id>/favorite_workouts', methods=['GET'])
 @cross_origin(origin="*")
 def get_favorite_workouts(user_id):
@@ -666,7 +712,27 @@ def remove_favorite_workout(user_id):
     else:
         return jsonify({'message': 'Favorite not found'}), 404
 
-    
+@app.route('/users/<string:user_id>/update_profile_pic', methods=['PUT'])
+@cross_origin(origin="*")
+def update_profile_pic(user_id):
+    try:
+        data = request.get_json()
+
+        # Extract the new profile picture URL from the request
+        new_profile_pic = data.get('profile_pic')
+
+        # Fetch the user by user_id
+        user = User.query.get(user_id)
+        if user:
+            # Update the user's profile picture
+            user.profile_pic = new_profile_pic
+            db.session.commit()
+            return jsonify({'message': 'Profile picture updated successfully'})
+        else:
+            return jsonify({'message': 'User not found'}), 404
+    except Exception as e:
+        return jsonify({'message': 'An error occurred while updating profile picture'}), 500
+
 # takes an array of workout ids to be removed, EX: [1,2]
 def remove_workout_programs(idArray):
     try:

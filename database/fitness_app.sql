@@ -47,7 +47,8 @@ CREATE TABLE workout_programs (
 CREATE TABLE users (
     id VARCHAR(100) PRIMARY KEY,
     email VARCHAR(50),
-    username VARCHAR(50)
+    username VARCHAR(50),
+    profile_pic VARCHAR(255)
 ); 
 
 CREATE TABLE exercises_workout_program (
@@ -340,8 +341,8 @@ INSERT INTO exercises_workout_program (workout_program_id, exercise_id)
 
         
 -- Add records to users table
-INSERT INTO users (id, email, username)
-    VALUES  ("UBxFAkGnd6Yw7tWpjALg0RvKYYp1", 'gdp7@email.com', 'Admin');
+INSERT INTO users (id, email, username, profile_pic)
+    VALUES  ("UBxFAkGnd6Yw7tWpjALg0RvKYYp1", 'gdp7@email.com', 'Admin', 'https://firebasestorage.googleapis.com/v0/b/fitness-app-fd0eb.appspot.com/o/images%2FUBxFAkGnd6Yw7tWpjALg0RvKYYp1?alt=media&token=75cbb891-7edc-43d7-ab1b-c8caaa55cb65');
 
 -- Add records to users_workout_program table
 INSERT INTO users_workout_program (user_id, workout_program_id) 

@@ -8,7 +8,7 @@ import {
   WorkoutProgramList,
 } from "../types/API";
 
-export const baseURL = "http://192.168.1.108:5000";
+export const baseURL = "http://192.168.0.66:5000";
 
 async function fetchAllWorkoutPrograms(): Promise<WorkoutProgramList | null> {
   try {
@@ -25,14 +25,20 @@ async function fetchAllWorkoutPrograms(): Promise<WorkoutProgramList | null> {
   }
 }
 
-async function fetchFavoriteWorkoutPrograms(userId: string): Promise<WorkoutProgramList | null> {
+async function fetchFavoriteWorkoutPrograms(
+  userId: string
+): Promise<WorkoutProgramList | null> {
   try {
-    const response = await fetch(`${baseURL}/users/${userId}/favorite_workouts`);
+    const response = await fetch(
+      `${baseURL}/users/${userId}/favorite_workouts`
+    );
     if (response.ok) {
       const data: WorkoutProgramList = await response.json();
       return data;
     } else {
-      console.error(`Failed to fetch favorite workouts. Status: ${response.status}`);
+      console.error(
+        `Failed to fetch favorite workouts. Status: ${response.status}`
+      );
       return null;
     }
   } catch (error) {
@@ -41,6 +47,23 @@ async function fetchFavoriteWorkoutPrograms(userId: string): Promise<WorkoutProg
   }
 }
 
+async function fetchWorkoutProgramsbyUser(
+  userId: string
+): Promise<WorkoutProgramList | null> {
+  try {
+    const response = await fetch(`${baseURL}/users/${userId}/workout_programs`);
+    if (response.ok) {
+      const data: WorkoutProgramList = await response.json();
+      return data;
+    } else {
+      console.error(`Failed to fetch workouts. Status: ${response.status}`);
+      return null;
+    }
+  } catch (error) {
+    console.error(`Error fetching workouts: ${error}`);
+    return null;
+  }
+}
 
 async function fetchFilteredWorkoutPrograms(
   filters: Array<number>
@@ -200,6 +223,28 @@ async function updateUsername(
   }
 }
 
+async function updateProfilePic(
+  userId: string,
+  profilePic: string
+): Promise<boolean> {
+  try {
+    const response = await fetch(
+      `${baseURL}/users/${userId}/update_profile_pic`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ profile_pic: profilePic }),
+      }
+    );
+    return response.ok;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
 export {
   fetchAllWorkoutPrograms,
   fetchFilteredWorkoutPrograms,
@@ -212,4 +257,6 @@ export {
   updateUserPersonalBests,
   updateUsername,
   fetchFavoriteWorkoutPrograms,
+  fetchWorkoutProgramsbyUser,
+  updateProfilePic,
 };

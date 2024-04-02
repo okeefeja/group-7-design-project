@@ -4,14 +4,16 @@ import Descriptor from "../../components/Descriptor/Descriptor";
 import { fetchAllExercises } from "../../services/API";
 import { ExerciseList, Exercises } from "../../types/API";
 import Collapser from "../../components/Collapser/Collapser";
-import { Text } from "react-native";
+import { Text, View, ActivityIndicator } from "react-native";
 import ExerciseListSmall from "../../components/ExerciseListSmall/ExerciseListSmall";
 import Spacer from "../../components/Spacer/Spacer";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 export default function ExerciseInformationScreen() {
   const [exercises, setExercises] = useState<ExerciseList | null>(null);
   const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
   const [error, setError] = useState(false);
+  const devTest = false;
 
   async function getExercises() {
     const fetchedExercises: ExerciseList | null = await fetchAllExercises();
@@ -41,16 +43,23 @@ export default function ExerciseInformationScreen() {
       <Descriptor
         title="Exercise information"
         description="Learn more about all of our featured exercises!"
+        isLiked={false}
+        toggleLike={function (): void {
+          throw new Error("Function not implemented.");
+        }}
       />
       <Spacer orientation="vertical" size={4} />
-      {exercises && (
+      {exercises ? (
         <ExerciseListSmall
           exercises={exercises}
           selectedExercises={selectedExercises}
           handleClick={handleSelect}
           type="info"
         />
+      ) : (
+        <LoadingSpinner text="Loading exercises..." />
       )}
+      <Spacer orientation="vertical" size={5} />
     </ScBaseContainerScroll>
   );
 }

@@ -1,6 +1,9 @@
 import styled from "styled-components/native";
 
 const ScDecriptorContainer = styled.View`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   padding: 16px 24px 20px 24px;
   border-radius: 12px;
   background-color: #111;
@@ -19,6 +22,5 @@ const ScDescriptionText = styled.Text`
   font-size: 14px;
   color: white;
 `;
-
 
 export { ScDecriptorContainer, ScTitleText, ScDescriptionText };

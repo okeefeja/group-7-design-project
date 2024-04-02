@@ -12,6 +12,7 @@ import {
   fetchUserById,
   updateUserPersonalBests,
   fetchFavoriteWorkoutPrograms,
+  fetchWorkoutProgramsbyUser,
 } from "../../services/API";
 import { User, WorkoutProgramList } from "../../types/API";
 import UserDescriptor from "../../components/UserDescriptor/UserDescriptor";
@@ -35,28 +36,32 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [benchPress, setBenchPress] = useState<string | null>(null);
   const [deadlift, setDeadlift] = useState<string | null>(null);
   const [squats, setSquats] = useState<string | null>(null);
-  const [workoutPrograms, setWorkoutPrograms] =
-    useState<WorkoutProgramList | null>(null);
+  const [userWorkouts, setUserWorkouts] = useState<WorkoutProgramList | null>(
+    null
+  );
   const [error, setError] = useState(false);
   const auth = getAuth();
 
-  const [favoriteWorkouts, setFavoriteWorkouts] = useState<WorkoutProgramList | null>(null);
+  const [favoriteWorkouts, setFavoriteWorkouts] =
+    useState<WorkoutProgramList | null>(null);
 
   function handleNavigation(id: number) {
     navigateToWorkoutProgram(navigation, id);
   }
-  async function getWorkoutProgram(): Promise<void> {
-    const fetchedWorkoutPrograms: WorkoutProgramList | null =
-      await fetchAllWorkoutPrograms();
+  async function getWorkoutProgramsByUser(): Promise<void> {
+    if (user) {
+      const fetchedWorkoutPrograms: WorkoutProgramList | null =
+        await fetchWorkoutProgramsbyUser(user.id);
 
-    if (fetchedWorkoutPrograms) {
-      setWorkoutPrograms(fetchedWorkoutPrograms);
-    } else {
-      setError(true);
+      if (fetchedWorkoutPrograms) {
+        setUserWorkouts(fetchedWorkoutPrograms);
+      } else {
+        setError(true);
+      }
     }
   }
 
-  async function getFavoriteWorkoutProgram()  {
+  async function getFavoriteWorkoutProgram() {
     const userId = auth.currentUser?.uid;
     const fetchedWorkoutPrograms: WorkoutProgramList | null =
       await fetchFavoriteWorkoutPrograms(String(userId));
@@ -98,21 +103,22 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       getUser();
     }
   }
-  
 
   useEffect(() => {
-    getFavoriteWorkoutProgram();
     getUser();
-  }, [favoriteWorkouts]);
+    getFavoriteWorkoutProgram();
+    getWorkoutProgramsByUser();
+  }, []);
 
   useEffect(() => {
     if (auth.currentUser?.uid) {
-      fetchFavoriteWorkoutPrograms(auth.currentUser.uid)
-        .then(favoriteWorkouts => {
+      fetchFavoriteWorkoutPrograms(auth.currentUser.uid).then(
+        (favoriteWorkouts) => {
           if (favoriteWorkouts) {
             setFavoriteWorkouts(favoriteWorkouts);
           }
-        });
+        }
+      );
     }
   }, [auth.currentUser?.uid]);
 
@@ -135,7 +141,12 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             <Text style={{ color: "gray" }}>Account settings</Text>
           </TouchableOpacity>
           <Spacer orientation="vertical" size={3} />
-          <UserDescriptor email={user.email} username={user.username} />
+          <UserDescriptor
+            email={user.email}
+            username={user.username}
+            profilePic={user.profile_pic}
+            onPress={() => alert("Clicked")}
+          />
           <Spacer orientation="vertical" size={4} />
           <PBInput
             values={[benchPress, deadlift, squats]}
@@ -143,12 +154,23 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             onSubmit={handleSubmit}
           />
           <Spacer orientation="vertical" size={4} />
-          
+
+          {userWorkouts && (
+            <WorkoutListSmall
+              title="My workouts"
+              workoutPrograms={userWorkouts}
+              onPress={handleNavigation}
+              emptyText="Empty! Create some new workouts!"
+            />
+          )}
+          <Spacer orientation="vertical" size={4} />
+
           {favoriteWorkouts && (
             <WorkoutListSmall
               title="Favorite workouts"
               workoutPrograms={favoriteWorkouts}
               onPress={handleNavigation}
+              emptyText="Empty! Go find some favorite workouts!"
             />
           )}
           <Spacer orientation="vertical" size={4} />
