@@ -20,5 +20,4 @@ const ScDescriptionText = styled.Text`
   color: white;
 `;
 
-
 export { ScDecriptorContainer, ScTitleText, ScDescriptionText };

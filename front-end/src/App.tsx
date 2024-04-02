@@ -26,13 +26,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="LoginScreen">
-        <Stack.Screen
-          name="LoginScreen" 
-          component={LoginScreen} 
-          options={({ navigation }) => ({
-            headerShown: false,
-          })}
-        />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen
           name="Main"
           component={MyTabs}
@@ -43,30 +37,12 @@ export default function App() {
             ),
           })}
         />
-        <Stack.Screen 
-          name="WorkoutProgram" 
-          component={WorkoutProgramScreen} 
-          options={({ navigation }) => ({
-            headerShown: true,
-            header: () => (
-              <CustomHeader username="User Usersson" navigation={navigation} showBackButton={true} showHeaderInfo={false} />
-            ),
-          })}
-        />
+        <Stack.Screen name="WorkoutProgram" component={WorkoutProgramScreen} />
         <Stack.Screen
           name="AddWorkoutProgramScreen"
           component={AddWorkoutProgramScreen}
         />
-        <Stack.Screen 
-          name="EditProfileScreen" 
-          component={EditProfileScreen} 
-          options={({ navigation }) => ({
-            headerShown: true,
-            header: () => (
-              <CustomHeader username="User Usersson" navigation={navigation} showBackButton={true} showHeaderInfo={false} />
-            ),
-          })}
-        />
+        <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

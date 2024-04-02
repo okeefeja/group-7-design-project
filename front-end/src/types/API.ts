@@ -43,7 +43,6 @@ type User = {
     squats: string | null;
     deadlift: string | null;
   };
-  favoriteWorkouts: {id : number; name: string; description: string}[];
 };
 
 type FilterButtonProps = {

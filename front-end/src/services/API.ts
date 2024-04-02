@@ -8,7 +8,7 @@ import {
   WorkoutProgramList,
 } from "../types/API";
 
-export const baseURL = "http://192.168.1.108:5000";
+const baseURL = "http://10.6.94.135:5000";
 
 async function fetchAllWorkoutPrograms(): Promise<WorkoutProgramList | null> {
   try {
@@ -24,23 +24,6 @@ async function fetchAllWorkoutPrograms(): Promise<WorkoutProgramList | null> {
     return null;
   }
 }
-
-async function fetchFavoriteWorkoutPrograms(userId: string): Promise<WorkoutProgramList | null> {
-  try {
-    const response = await fetch(`${baseURL}/users/${userId}/favorite_workouts`);
-    if (response.ok) {
-      const data: WorkoutProgramList = await response.json();
-      return data;
-    } else {
-      console.error(`Failed to fetch favorite workouts. Status: ${response.status}`);
-      return null;
-    }
-  } catch (error) {
-    console.error(`Error fetching favorite workouts: ${error}`);
-    return null;
-  }
-}
-
 
 async function fetchFilteredWorkoutPrograms(
   filters: Array<number>
@@ -105,6 +88,30 @@ async function fetchAllExercises(): Promise<ExerciseList | null> {
   } catch (error) {
     console.log(error);
     return null;
+  }
+}
+
+async function fetchFoodCategories(minProtein = 20, numberOfResults = 20) {
+  const url = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${'6b6598b92df34af89d85e63091012fcd'}&sort=popularity&minProtein=${minProtein}&number=${numberOfResults}`;
+
+  try {
+      const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+      });
+
+      if (!response.ok) {
+          throw new Error(`Network response was not ok, status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data);
+      return data.results; 
+  } catch (error) {
+      console.error('Error fetching food categories:', error);
+      return null; 
   }
 }
 
@@ -206,10 +213,10 @@ export {
   fetchWorkoutProgramById,
   fetchBodyParts,
   fetchAllExercises,
+  fetchFoodCategories,
   addWorkoutProgram,
   fetchUserById,
   addUser,
   updateUserPersonalBests,
   updateUsername,
-  fetchFavoriteWorkoutPrograms,
 };

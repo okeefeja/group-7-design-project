@@ -107,12 +107,7 @@ export default function BrowseProgramScreen({
       <Descriptor
         title="Workout Programs"
         description="Browse here for your new favorite workout program!"
-        showHeartIcon={false} 
-        isLiked={false} 
-        toggleLike={function (): void {
-          throw new Error("Function not implemented.");
-        } }      
-        />
+      />
       <Spacer size={2} orientation="vertical" />
 
       <FilterList filters={bodyParts} onFilterSelect={handleFilterSelect} />
