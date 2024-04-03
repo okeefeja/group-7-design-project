@@ -246,7 +246,7 @@ async function updateProfilePic(
 }
 
 async function fetchIngredients(query: string) {
-  const url = `https://api.spoonacular.com/food/ingredients/search?apiKey=6b6598b92df34af89d85e63091012fcd&query=${query}&number=10`;
+  const url = `https://api.spoonacular.com/food/ingredients/search?apiKey=6b6598b92df34af89d85e63091012fcd&query=${query}&number=5`;
 
   try {
     const response = await fetch(url, {
@@ -271,7 +271,7 @@ async function fetchIngredients(query: string) {
 }
 
 async function fetchIngredientByID(id: number) {
-  const url = `https://api.spoonacular.com/food/ingredients/${id}/information?apiKey=6b6598b92df34af89d85e63091012fcd&amount=1`;
+  const url = `https://api.spoonacular.com/food/ingredients/${id}/information?apiKey=6b6598b92df34af89d85e63091012fcd&amount=100&unit=g`;
 
   try {
     const response = await fetch(url, {

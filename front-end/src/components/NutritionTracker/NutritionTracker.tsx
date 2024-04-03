@@ -4,12 +4,13 @@ import { ViewRow, ViewCol } from "../Global/ViewFlex";
 import Spacer from "../Spacer/Spacer";
 
 interface NutritionTrackerProps {
-  calories: number;
-  nutritionData: { label: string; total: number }[];
+  nutritionData: {
+    calories: number;
+    macros: { label: string; total: number }[];
+  };
 }
 
 export default function NutritionTracker({
-  calories,
   nutritionData,
 }: NutritionTrackerProps) {
   return (
@@ -22,7 +23,7 @@ export default function NutritionTracker({
           height: 75,
         }}
       >
-        {calories}
+        {nutritionData.calories}
       </Text>
       <Text style={{ color: "white", fontSize: 18 }}>Calories</Text>
       <Spacer orientation="vertical" size={3} />
@@ -32,14 +33,14 @@ export default function NutritionTracker({
           width: "70%",
         }}
       >
-        {nutritionData.map((element, i) => {
+        {nutritionData.macros.map((macro, i) => {
           return (
             <ViewCol style={{ alignItems: "center" }} key={i}>
               <Text style={{ color: "white", fontSize: 22, fontWeight: "600" }}>
-                {element.total}g
+                {macro.total}g
               </Text>
               <Text style={{ color: "white", fontSize: 16 }}>
-                {element.label}
+                {macro.label}
               </Text>
             </ViewCol>
           );

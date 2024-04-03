@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
-import { ScBaseContainer } from "../../components/BaseContainer/BaseContainer.styled";
+import {
+  ScBaseContainer,
+  ScBaseContainerScroll,
+} from "../../components/BaseContainer/BaseContainer.styled";
 import { fetchIngredientByID, fetchIngredients } from "../../services/API";
 import { ViewCol, ViewRow } from "../../components/Global/ViewFlex";
 import Spacer from "../../components/Spacer/Spacer";
@@ -11,6 +14,7 @@ import SubmitButton from "../../components/Buttons/SubmitButton/SubmitButton";
 import IngredientSearchCard from "../../components/IngredientSearchCard/IngredientSearchCard";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import IngredientCardFull from "../../components/IngredientCardFull/IngredientCardFull";
+import { FoodItem, Nutrient } from "../../types/API";
 
 const DEVDATA = [
   { label: "Protein", total: 91 },
@@ -24,8 +28,17 @@ type IngredientListType = {
   name: string;
 }[];
 
+interface NutritionTotals {
+  calories: number;
+  macros: Macro[];
+}
+
+type Macro = {
+  label: string;
+  total: number;
+};
+
 // OVERALL TODO
-//      * Add nutrient tracking to big labels
 //      * Add dropdown functionality to show more nutrients on IngredientCardFull
 //      * Add ClearAll functionality to nutrition tracker
 //      * Fix text styling and formatting on IngredientCardFull
@@ -35,11 +48,31 @@ export default function NutritionScreen() {
   const [ingredients, setIngredients] = useState<IngredientListType | null>(
     null
   );
-  const [selectedIngredients, setSelectedIngredients] = useState<any[] | null>(
-    null
-  );
+  const [selectedIngredients, setSelectedIngredients] = useState<
+    FoodItem[] | null
+  >(null);
+  const [nutritionTotals, setNutritionTotals] = useState({
+    calories: 0,
+    macros: [
+      {
+        label: "Protein",
+        total: 0,
+      },
+      {
+        label: "Carbs",
+        total: 0,
+      },
+      {
+        label: "Fat",
+        total: 0,
+      },
+    ],
+  });
   const [error, setError] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [ingredientWeights, setIngredientWeights] = useState<{
+    [key: number]: number;
+  }>({}); // Store weights for each ingredient
 
   async function getIngredients(): Promise<void> {
     const fetchedIngredients: IngredientListType | null =
@@ -54,28 +87,136 @@ export default function NutritionScreen() {
   }
 
   async function getIngredientByID(id: number): Promise<void> {
-    const fetchedIngredient: any = await fetchIngredientByID(id);
+    const fetchedIngredient: FoodItem | null = await fetchIngredientByID(id);
 
-    // TODO: Fix so that user can remove selected ingredient
     if (fetchedIngredient) {
-      if (selectedIngredients) {
-        setSelectedIngredients([...selectedIngredients, fetchedIngredient]);
-      } else {
-        setSelectedIngredients([fetchedIngredient]);
-      }
+      // Update selected ingredients
+      setSelectedIngredients((prevSelectedIngredients: FoodItem[] | null) =>
+        prevSelectedIngredients
+          ? [...prevSelectedIngredients, fetchedIngredient]
+          : [fetchedIngredient]
+      );
+
+      // Calculate new totals
+      const newTotals = calculateNewTotals(fetchedIngredient);
+
+      // Update nutrition totals
+      setNutritionTotals(newTotals);
     } else {
       setError(true);
     }
   }
 
-  useEffect(() => {
-    if (selectedIngredients) {
+  // Function to calculate new totals based on the added ingredient
+  const calculateNewTotals = (ingredient: FoodItem): NutritionTotals => {
+    let newCalories = nutritionTotals.calories;
+    const newMacros = [...nutritionTotals.macros];
+
+    // Update calories
+    const calories = ingredient.nutrition.nutrients.find(
+      (nutrient) => nutrient.name === "Calories"
+    );
+    if (calories) {
+      newCalories += calories.amount;
     }
-  }, [selectedIngredients]);
+
+    // Update macros
+    newMacros.forEach((macro) => {
+      const nutrient = ingredient.nutrition.nutrients.find(
+        (nutrient) => nutrient.name === macro.label
+      );
+      if (nutrient) {
+        macro.total += nutrient.amount;
+      }
+    });
+
+    return {
+      calories: newCalories,
+      macros: newMacros,
+    };
+  };
+
+  const handleIngredientAdd = async (id: number) => {
+    await getIngredientByID(id);
+    setSearchQuery("");
+    setIngredients(null);
+  };
+
+  const handleWeightChange = (id: number, weight: number) => {
+    setIngredientWeights({ ...ingredientWeights, [id]: weight });
+  };
+
+  const handleUpdateTotals = () => {
+    let newCalories = 0;
+    let newMacros: Macro[] = [];
+
+    selectedIngredients?.forEach((ingredient) => {
+      const weight = ingredientWeights[ingredient.id] ?? 100;
+      const factor = weight / 100;
+
+      ingredient.nutrition.nutrients.forEach((nutrient) => {
+        // Check if the nutrient is one of the macros we want to include
+        if (
+          ["Calories", "Protein", "Carbohydrates", "Fat"].includes(
+            nutrient.name
+          )
+        ) {
+          if (nutrient.name === "Calories") {
+            newCalories += Number((nutrient.amount * factor).toFixed(1));
+          } else {
+            const existingMacro = newMacros.find(
+              (macro) => macro.label === nutrient.name
+            );
+            if (existingMacro) {
+              existingMacro.total += Number(
+                (nutrient.amount * factor).toFixed(1)
+              );
+            } else {
+              newMacros.push({
+                label: nutrient.name,
+                total: Number((nutrient.amount * factor).toFixed(1)),
+              });
+            }
+          }
+        }
+      });
+    });
+
+    setNutritionTotals({
+      calories: Number(newCalories.toFixed(1)),
+      macros: newMacros.map((macro) => ({
+        label: macro.label,
+        total: Number(macro.total.toFixed(1)),
+      })),
+    });
+  };
+
+  const handleClear = () => {
+    setSelectedIngredients(null);
+    setNutritionTotals({
+      calories: 0,
+      macros: [
+        {
+          label: "Protein",
+          total: 0,
+        },
+        {
+          label: "Carbs",
+          total: 0,
+        },
+        {
+          label: "Fat",
+          total: 0,
+        },
+      ],
+    });
+    setIngredientWeights({});
+  };
+
   return (
-    <ScBaseContainer>
-      <View style={{ height: "100%" }}>
-        <NutritionTracker calories={2247} nutritionData={DEVDATA} />
+    <ScBaseContainerScroll>
+      <View style={{ minHeight: 800 }}>
+        <NutritionTracker nutritionData={nutritionTotals} />
         <Spacer orientation="vertical" size={4} />
         <ViewRow
           style={{ justifyContent: "space-between", alignItems: "center" }}
@@ -89,23 +230,41 @@ export default function NutritionScreen() {
               flexDirection: "row",
             }}
           >
-            <TextButton label="Clear" onClick={alert} />
+            <TextButton label="Clear" onClick={handleClear} />
             <Spacer orientation="horizontal" size={3} />
           </View>
         </ViewRow>
         {selectedIngredients ? (
           <>
             <Text style={{ color: "gray", fontSize: 14 }}>
-              Click on ingredients to show full nutrients!
+              Click on ingredients to show macros!
             </Text>
             <Spacer orientation="vertical" size={1} />
-            {selectedIngredients.map((ingredient) => {
-              return <IngredientCardFull name={ingredient.name} />;
+            {selectedIngredients.map((ingredient, i) => {
+              return (
+                <>
+                  <IngredientCardFull
+                    key={i}
+                    name={ingredient.name}
+                    defaultWeight={ingredientWeights[ingredient.id] ?? 100}
+                    onWeightChange={(weight) =>
+                      handleWeightChange(ingredient.id, weight)
+                    }
+                  />
+                  <Spacer orientation="vertical" size={2} />
+                </>
+              );
             })}
+            <Spacer orientation="vertical" size={3} />
+            <SubmitButton
+              label="Update amounts"
+              onClick={handleUpdateTotals}
+              style={{ alignItems: "center" }}
+            />
           </>
         ) : (
           <Text style={{ color: "gray", fontSize: 16 }}>
-            Nothing added yet!
+            Use the search bar to start tracking!
           </Text>
         )}
         <Spacer orientation="vertical" size={4} />
@@ -137,7 +296,7 @@ export default function NutritionScreen() {
               {ingredients.map((ingredient) => {
                 return (
                   <TouchableOpacity
-                    onPress={() => getIngredientByID(ingredient.id)}
+                    onPress={() => handleIngredientAdd(ingredient.id)}
                   >
                     <IngredientSearchCard name={ingredient.name} />
                     <Spacer orientation="vertical" size={2} />
@@ -148,6 +307,6 @@ export default function NutritionScreen() {
           </>
         )}
       </View>
-    </ScBaseContainer>
+    </ScBaseContainerScroll>
   );
 }
