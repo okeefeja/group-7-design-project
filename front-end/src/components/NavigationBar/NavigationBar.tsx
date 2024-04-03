@@ -8,6 +8,7 @@ import tabBarStyles from "./NavigationBar.styled";
 import InformationScreen from "../../screens/InformationPage/InformationScreen";
 import { LogBox } from "react-native";
 import ExerciseInformationScreen from "../../screens/InformationPage/ExerciseInformationScreen";
+import NutritionScreen from "../../screens/NutritionScreen/NutritionScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -37,6 +38,16 @@ function MyTabs() {
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Icon name="information-sharp" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Nutrition"
+        component={NutritionScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="stats-chart-sharp" color={color} size={size} />
           ),
         }}
       />
