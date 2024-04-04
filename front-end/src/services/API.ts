@@ -246,7 +246,7 @@ async function updateProfilePic(
 }
 
 async function fetchIngredients(query: string) {
-  const url = `https://api.spoonacular.com/food/ingredients/search?apiKey=6b6598b92df34af89d85e63091012fcd&query=${query}&number=5`;
+  const url = `https://api.spoonacular.com/food/ingredients/search?apiKey=6b6598b92df34af89d85e63091012fcd&query=${query}&number=5&metaInformation=true`;
 
   try {
     const response = await fetch(url, {

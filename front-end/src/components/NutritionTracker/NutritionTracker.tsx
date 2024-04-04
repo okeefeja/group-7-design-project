@@ -23,7 +23,7 @@ export default function NutritionTracker({
           height: 75,
         }}
       >
-        {nutritionData.calories}
+        {Number(nutritionData.calories.toFixed(1))}
       </Text>
       <Text style={{ color: "white", fontSize: 18 }}>Calories</Text>
       <Spacer orientation="vertical" size={3} />
@@ -37,7 +37,7 @@ export default function NutritionTracker({
           return (
             <ViewCol style={{ alignItems: "center" }} key={i}>
               <Text style={{ color: "white", fontSize: 22, fontWeight: "600" }}>
-                {macro.total}g
+                {Number(macro.total.toFixed(1))}g
               </Text>
               <Text style={{ color: "white", fontSize: 16 }}>
                 {macro.label}

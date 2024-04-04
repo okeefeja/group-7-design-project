@@ -5,7 +5,7 @@ export const ScIngredientCardFullContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 12px;
+  padding: 18px;
   border-radius: 12px;
   border: 2px solid #303030;
   background-color: #111;
@@ -21,5 +21,7 @@ export const ScGramInput = styled.TextInput.attrs(() => ({
   background-color: black;
   color: white;
   font-size: 16px;
-  ${(props) => (props.focus ? "border: 2px solid #ff8610;" : null)}
+  min-width: 50px;
+  text-align: center;
+  ${(props) => (props.focus ? "border: 2px solid #ff8610;" : null)};
 `;
