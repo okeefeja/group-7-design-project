@@ -1,0 +1,22 @@
+version: '3'
+services:
+
+  database:
+    build: ./database
+    container_name: database
+
+  back-end:
+    build: ./back-end
+    container_name: back-end
+    links:
+      - database
+    ports: 
+      - 5000:5000
+      
+  front-end: 
+    build: ./front-end
+    container_name: front-end
+    links: 
+      - back-end
+    ports: 
+      - 8081:8081
