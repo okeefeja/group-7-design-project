@@ -11,6 +11,3 @@ COPY package.json yarn.lock ./
 RUN npm install
 
 COPY . .
-
-CMD npx expo start
-
