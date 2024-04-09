@@ -15,5 +15,5 @@ Built with a comprehensive stack of languages and technologies including Typescr
 
 **GETTING STARTED**
 
-In order to run our app, please refer to the back-end, front-end, and database branches for information about their respective configurations.
+In order to run our app, please refer to the back-end, front-end, and database folders for information about their respective configurations.
 
