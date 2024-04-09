@@ -11,7 +11,7 @@ Built with a comprehensive stack of languages and technologies including Typescr
 --> Detailed descriptions on how to perform each exercise. \
 --> Easily save your favorite workout programs for quick access. \
 --> Log and view nutrional information of various foods to aid your fitness journey. \
---> Keep track of your progress in the three compound lifts: squat, bench press, and deadlift, and set new personal records. \
+--> Keep track of your progress in the three compound lifts: squat, bench press, and deadlift, and set new personal records.
 
 **GETTING STARTED**
 
