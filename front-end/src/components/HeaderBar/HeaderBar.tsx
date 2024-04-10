@@ -15,6 +15,7 @@ import { getAuth } from "firebase/auth";
 import { User } from "../../types/API";
 import { fetchUserById } from "../../services/API";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { useAuth } from "../../AuthProvider";
 
 interface CustomHeaderProps {
   navigation: any;
@@ -29,7 +30,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
   showBackButton = false,
   showUserInfo = true,
 }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, setUser } = useAuth();
   const [error, setError] = useState(false);
 
   const auth = getAuth();

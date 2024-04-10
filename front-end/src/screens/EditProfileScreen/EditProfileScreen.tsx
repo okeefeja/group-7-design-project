@@ -18,9 +18,10 @@ import InputForm from "../../components/InputForm/InputForm";
 import Spacer from "../../components/Spacer/Spacer";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImage } from "../../../firebaseModel";
+import { useAuth } from "../../AuthProvider";
 
 export default function EditProfileScreen() {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, setUser } = useAuth();
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);

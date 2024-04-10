@@ -245,6 +245,56 @@ async function updateProfilePic(
   }
 }
 
+async function fetchIngredients(query: string) {
+  const url = `https://api.spoonacular.com/food/ingredients/search?apiKey=6b6598b92df34af89d85e63091012fcd&query=${query}&number=5&metaInformation=true`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Network response was not ok, status: ${response.status}`
+      );
+    }
+
+    const data = await response.json();
+    return data.results;
+  } catch (error) {
+    console.error("Error fetching food categories:", error);
+    return null;
+  }
+}
+
+async function fetchIngredientByID(id: number) {
+  const url = `https://api.spoonacular.com/food/ingredients/${id}/information?apiKey=6b6598b92df34af89d85e63091012fcd&amount=100&unit=g`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Network response was not ok, status: ${response.status}`
+      );
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching food categories:", error);
+    return null;
+  }
+}
+
 export {
   fetchAllWorkoutPrograms,
   fetchFilteredWorkoutPrograms,
@@ -259,4 +309,6 @@ export {
   fetchFavoriteWorkoutPrograms,
   fetchWorkoutProgramsbyUser,
   updateProfilePic,
+  fetchIngredients,
+  fetchIngredientByID,
 };

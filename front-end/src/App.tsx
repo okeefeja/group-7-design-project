@@ -18,6 +18,7 @@ import ExerciseInformationScreen from "./screens/InformationPage/ExerciseInforma
 import ProfileScreen from "./screens/ProfileScreen/ProfileScreen";
 import EditProfileScreen from "./screens/EditProfileScreen/EditProfileScreen";
 import { decode } from "base-64";
+import { AuthProvider } from "./AuthProvider";
 
 // Check if `atob` is undefined, if so, attach `decode` to the global scope
 if (typeof atob === "undefined") {
@@ -30,75 +31,77 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="LoginScreen"
-        screenOptions={{
-          headerShown: false,
-          cardStyle: { backgroundColor: "black" },
-        }}
-      >
-        <Stack.Screen
-          name="LoginScreen"
-          component={LoginScreen}
-          options={({ navigation }) => ({
+    <AuthProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="LoginScreen"
+          screenOptions={{
             headerShown: false,
-          })}
-        />
-        <Stack.Screen
-          name="Main"
-          component={MyTabs}
-          options={({ navigation }) => ({
-            headerShown: true,
-            header: () => <CustomHeader navigation={navigation} />,
-          })}
-        />
-        <Stack.Screen
-          name="WorkoutProgram"
-          component={WorkoutProgramScreen}
-          options={({ navigation }) => ({
-            headerShown: true,
-            header: () => (
-              <CustomHeader
-                navigation={navigation}
-                label="Workout Program"
-                showBackButton={true}
-                showUserInfo={false}
-              />
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="AddWorkoutProgramScreen"
-          component={AddWorkoutProgramScreen}
-          options={({ navigation }) => ({
-            headerShown: true,
-            header: () => (
-              <CustomHeader
-                navigation={navigation}
-                showBackButton={true}
-                showUserInfo={false}
-                label="Add workout program"
-              />
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="EditProfileScreen"
-          component={EditProfileScreen}
-          options={({ navigation }) => ({
-            headerShown: true,
-            header: () => (
-              <CustomHeader
-                navigation={navigation}
-                label="Account settings"
-                showBackButton={true}
-                showUserInfo={false}
-              />
-            ),
-          })}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+            cardStyle: { backgroundColor: "black" },
+          }}
+        >
+          <Stack.Screen
+            name="LoginScreen"
+            component={LoginScreen}
+            options={({ navigation }) => ({
+              headerShown: false,
+            })}
+          />
+          <Stack.Screen
+            name="Main"
+            component={MyTabs}
+            options={({ navigation }) => ({
+              headerShown: true,
+              header: () => <CustomHeader navigation={navigation} />,
+            })}
+          />
+          <Stack.Screen
+            name="WorkoutProgram"
+            component={WorkoutProgramScreen}
+            options={({ navigation }) => ({
+              headerShown: true,
+              header: () => (
+                <CustomHeader
+                  navigation={navigation}
+                  label="Workout Program"
+                  showBackButton={true}
+                  showUserInfo={false}
+                />
+              ),
+            })}
+          />
+          <Stack.Screen
+            name="AddWorkoutProgramScreen"
+            component={AddWorkoutProgramScreen}
+            options={({ navigation }) => ({
+              headerShown: true,
+              header: () => (
+                <CustomHeader
+                  navigation={navigation}
+                  showBackButton={true}
+                  showUserInfo={false}
+                  label="Add workout program"
+                />
+              ),
+            })}
+          />
+          <Stack.Screen
+            name="EditProfileScreen"
+            component={EditProfileScreen}
+            options={({ navigation }) => ({
+              headerShown: true,
+              header: () => (
+                <CustomHeader
+                  navigation={navigation}
+                  label="Account settings"
+                  showBackButton={true}
+                  showUserInfo={false}
+                />
+              ),
+            })}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AuthProvider>
   );
 }

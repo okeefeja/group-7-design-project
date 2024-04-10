@@ -2,13 +2,19 @@ import React, { useEffect, useState } from "react";
 import { Text } from "react-native";
 import CardList from "../../components/CardList/CardList";
 import Card from "../../components/WorkoutProgramCard/WorkoutProgramCard";
-import { WorkoutProgram } from "../../types/API";
-import { baseURL, fetchWorkoutProgramById, fetchFavoriteWorkoutPrograms } from "../../services/API";
+import { User, WorkoutProgram } from "../../types/API";
+import {
+  baseURL,
+  fetchWorkoutProgramById,
+  fetchFavoriteWorkoutPrograms,
+  fetchUserById,
+} from "../../services/API";
 import { ScBaseContainer } from "../../components/BaseContainer/BaseContainer.styled";
 import WorkoutProgressBar from "../../components/WorkoutProgressBar/WorkoutProgressBar";
 import WorkoutDescriptor from "../../components/Descriptor/Descriptor";
 import Spacer from "../../components/Spacer/Spacer";
 import { getAuth } from "firebase/auth";
+import { useAuth } from "../../AuthProvider";
 
 interface WorkoutProgramScreenProps {
   route: any;
@@ -17,6 +23,7 @@ interface WorkoutProgramScreenProps {
 export default function WorkoutProgramScreen({
   route,
 }: WorkoutProgramScreenProps) {
+  const { user, setUser } = useAuth();
   const workoutProgramId = route.params.workoutId;
   const [workoutProgram, setWorkoutProgram] = useState<WorkoutProgram | null>(
     null
@@ -26,57 +33,85 @@ export default function WorkoutProgramScreen({
   const [isLiked, setIsLiked] = useState(false);
 
   const auth = getAuth();
-  const userId = auth.currentUser?.uid;
+  async function getUser(): Promise<void> {
+    try {
+      if (auth.currentUser?.uid) {
+        const userId = auth.currentUser?.uid;
+        const fetchedUser: User | null = await fetchUserById(userId);
+        if (fetchedUser) {
+          setUser(fetchedUser);
+        }
+      } else {
+        setError(true);
+      }
+    } catch {
+      setError(true);
+      console.log("auth/user not found!");
+    }
+  }
 
   const toggleLike = async () => {
     // First, toggle the like state locally
     setIsLiked(!isLiked);
 
     // Then, make an API call to update the backend
-    if (userId) {
+    if (user) {
       try {
         // Here you would make an API call to update the user's favorite workouts
         // This is just a placeholder for whatever your API call would actually be
-        const response = await updateFavoriteWorkouts(userId, workoutProgramId, !isLiked);
-        // You'll need to define `updateFavoriteWorkoutsAPI` to communicate with your backend
-
+        const response = await updateFavoriteWorkouts(
+          user.id,
+          workoutProgramId,
+          !isLiked
+        );
+        if (response) {
+          getUser();
+        }
         // If necessary, handle any response here, e.g. updating local state with new favorites
-
       } catch (error) {
         // Handle any errors from the API call
-        console.error('Failed to update favorite workouts', error);
+        console.error("Failed to update favorite workouts", error);
         // Optionally, revert the like state if the API call fails
         setIsLiked(isLiked);
       }
     }
   };
 
-  async function updateFavoriteWorkouts(userId: string, workoutProgramId: number, isLiked: boolean): Promise<boolean> {
+  async function updateFavoriteWorkouts(
+    userId: string,
+    workoutProgramId: number,
+    isLiked: boolean
+  ): Promise<boolean> {
     try {
-      if(isLiked){
-        console.log("Adding to the database")
-        const response = await fetch(`${baseURL}/users/${userId}/favorite_workouts`, {
-          method: "POST", 
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            workoutProgramId,
-          }),
-        });
+      if (isLiked) {
+        console.log("Adding to the database");
+        const response = await fetch(
+          `${baseURL}/users/${userId}/favorite_workouts`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              workoutProgramId,
+            }),
+          }
+        );
         return response.ok;
-      }
-      else{
-        console.log("Removing from the database")
-        const response = await fetch(`${baseURL}/users/${userId}/favorite_workouts`, {
-          method: "DELETE", 
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            workoutProgramId,
-          }),
-        });
+      } else {
+        console.log("Removing from the database");
+        const response = await fetch(
+          `${baseURL}/users/${userId}/favorite_workouts`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              workoutProgramId,
+            }),
+          }
+        );
         return response.ok;
       }
     } catch (error) {
@@ -86,23 +121,26 @@ export default function WorkoutProgramScreen({
   }
 
   async function checkIfWorkoutIsFavorited() {
-    if (userId) {
-      const favoriteWorkouts = await fetchFavoriteWorkoutPrograms(userId);
-      if(favoriteWorkouts) {
-        const ids = favoriteWorkouts.map(a => a.id);
-        if(ids.includes(workoutProgramId)){
-          setIsLiked(true)
-        }
-        else{
-          setIsLiked(false)
+    if (user) {
+      const favoriteWorkouts = await fetchFavoriteWorkoutPrograms(user.id);
+      if (favoriteWorkouts) {
+        const ids = favoriteWorkouts.map((a) => a.id);
+        if (ids.includes(workoutProgramId)) {
+          setIsLiked(true);
+        } else {
+          setIsLiked(false);
         }
       }
     }
   }
-  
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
   useEffect(() => {
     checkIfWorkoutIsFavorited();
-  }, [userId, workoutProgramId]);
+  }, [isLiked]);
 
   function addCompletedExercise(int: number) {
     setCompletedExercises(completedExercises + int);

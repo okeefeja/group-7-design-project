@@ -26,13 +26,14 @@ import SubmitButton from "../../components/Buttons/SubmitButton/SubmitButton";
 import PBInput from "../../components/PBInput/PBInput";
 import Icon from "react-native-vector-icons/Ionicons";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useAuth } from "../../AuthProvider";
 
 interface ProfileScreenProps {
   navigation: any;
 }
 
 const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, setUser } = useAuth();
   const [benchPress, setBenchPress] = useState<string | null>(null);
   const [deadlift, setDeadlift] = useState<string | null>(null);
   const [squats, setSquats] = useState<string | null>(null);
@@ -106,21 +107,14 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
   useEffect(() => {
     getUser();
-    getFavoriteWorkoutProgram();
-    getWorkoutProgramsByUser();
   }, []);
 
   useEffect(() => {
-    if (auth.currentUser?.uid) {
-      fetchFavoriteWorkoutPrograms(auth.currentUser.uid).then(
-        (favoriteWorkouts) => {
-          if (favoriteWorkouts) {
-            setFavoriteWorkouts(favoriteWorkouts);
-          }
-        }
-      );
+    if (user) {
+      getFavoriteWorkoutProgram();
+      getWorkoutProgramsByUser();
     }
-  }, [auth.currentUser?.uid]);
+  }, [user]);
 
   return (
     <ScBaseContainerScroll>

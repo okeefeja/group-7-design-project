@@ -116,21 +116,28 @@ export default function BrowseProgramScreen({
       <Spacer size={3} orientation="vertical" />
       <FilterList filters={bodyParts} onFilterSelect={handleFilterSelect} />
       <Spacer size={2} orientation="vertical" />
+      <Text style={{ color: "white", fontSize: 26, fontWeight: "600" }}>
+        Featured workout programs
+      </Text>
+      <TextButton
+        label="+ Add your own workout program"
+        onClick={handleAddProgram}
+      />
+      <Spacer size={2} orientation="vertical" />
       {workoutPrograms ? (
         <>
-          <Text style={{ color: "white", fontSize: 26, fontWeight: "600" }}>
-            Featured workout programs
-          </Text>
-          <TextButton
-            label="+ Add your own workout program"
-            onClick={handleAddProgram}
-          />
-          <Spacer size={2} orientation="vertical" />
-
           <CardList data={workoutPrograms} action={onPressHandler} />
         </>
       ) : (
-        <LoadingSpinner text="Loading workout programs..." />
+        <>
+          <Spacer orientation="vertical" size={5} />
+          <LoadingSpinner text="Loading workout programs..." />
+          <Spacer orientation="vertical" size={5} />
+          <Spacer orientation="vertical" size={5} />
+          <Spacer orientation="vertical" size={5} />
+          <Spacer orientation="vertical" size={5} />
+          <Spacer orientation="vertical" size={5} />
+        </>
       )}
     </ScBaseContainer>
   );
