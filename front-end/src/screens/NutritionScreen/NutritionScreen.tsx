@@ -236,7 +236,7 @@ export default function NutritionScreen() {
 
   useEffect(() => {
     getIngredients();
-  }, [searchQuery]);
+  }, []);
 
   return (
     <ScBaseContainerScroll>
@@ -315,9 +315,10 @@ export default function NutritionScreen() {
             </Text>
             <Spacer orientation="vertical" size={1} />
             <ScrollView style={{ display: "flex" }}>
-              {ingredients.map((ingredient) => {
+              {ingredients.map((ingredient, i) => {
                 return (
                   <TouchableOpacity
+                    key={i}
                     onPress={() => handleIngredientAdd(ingredient.id)}
                   >
                     <IngredientSearchCard
