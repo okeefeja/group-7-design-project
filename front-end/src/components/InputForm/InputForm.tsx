@@ -63,7 +63,7 @@ export default function InputForm({
         </View>
       </View>
       <Spacer orientation="vertical" size={2} />
-      {formData.map((inputData) => {
+      {formData.map((inputData, i) => {
         return (
           <>
             <UserInput
@@ -77,7 +77,7 @@ export default function InputForm({
               password={inputData.password}
               key={inputData.name}
             />
-            <Spacer orientation="vertical" size={3} />
+            <Spacer orientation="vertical" size={3} key={i} />
           </>
         );
       })}
