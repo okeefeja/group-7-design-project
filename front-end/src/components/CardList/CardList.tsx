@@ -8,6 +8,7 @@ import {
 import { ScCardListContainer, ScCardListScrollView } from "./CardList.styled";
 import ExerciseCard from "../ExerciseCard/ExerciseCard";
 import WorkoutProgramCard from "../WorkoutProgramCard/WorkoutProgramCard";
+import Spacer from "../Spacer/Spacer";
 
 interface CardListProps {
   // Add other types of card lists later
@@ -25,10 +26,10 @@ export default function CardList({ data, action }: CardListProps) {
         {data &&
           data.map((cardData: any) => {
             if (isWorkoutProgram(cardData)) {
-              console.log(cardData)
               return (
                 <WorkoutProgramCard
                   title={cardData.name}
+                  owner={cardData.owner.username}
                   description={cardData.description}
                   action={() => action(cardData.id)}
                   bodyParts={cardData.body_parts}
@@ -48,6 +49,8 @@ export default function CardList({ data, action }: CardListProps) {
             }
           })}
       </ScCardListContainer>
+      <Spacer orientation="vertical" size={5} />
+      <Spacer orientation="vertical" size={5} />
     </ScCardListScrollView>
   );
 }

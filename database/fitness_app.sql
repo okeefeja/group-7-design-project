@@ -45,11 +45,10 @@ CREATE TABLE workout_programs (
 
 -- Create a table which contains all user records
 CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
+    id VARCHAR(100) PRIMARY KEY,
+    email VARCHAR(50),
     username VARCHAR(50),
-    password VARCHAR(50)
+    profile_pic VARCHAR(255)
 ); 
 
 CREATE TABLE exercises_workout_program (
@@ -67,8 +66,23 @@ CREATE TABLE muscles_exercises (
 );
 
 CREATE TABLE users_workout_program (
-    user_id INT,
+    user_id VARCHAR(100),
     workout_program_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (workout_program_id) REFERENCES workout_programs(id)
+);
+
+CREATE TABLE user_personal_bests (
+    user_id VARCHAR(100),
+    bench_press VARCHAR(25),
+    squats VARCHAR(25),
+    deadlift VARCHAR(25),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE favorite_workouts (
+    workout_program_id INT,
+    user_id VARCHAR(100),
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (workout_program_id) REFERENCES workout_programs(id)
 );
@@ -317,24 +331,22 @@ VALUES
 INSERT INTO workout_programs (name, description)
     VALUES  ('James Arm Workout', 'An arm workout which James uses.'),
             ('James Leg Workout', 'A leg workout which James uses.'),
-            ('James Chest Workout', 'A chest workout which James uses.'),
-            ('Davys Back Workout', 'A back workout which Davy uses.');
+            ('James Chest Workout', 'A chest workout which James uses.');
 
 -- Add records to exercises_workout_program table
 INSERT INTO exercises_workout_program (workout_program_id, exercise_id)
     VALUES (1, 1), (1, 2), (1, 3), (1, 4), (1, 5),  
            (2, 25), (2, 26), (2, 28), (2, 29), (2, 30), 
-           (3, 60), (3, 61), (3, 62), (3, 63), (3, 64), 
-           (4, 75), (4, 76), (4, 78), (4, 79), (4, 80);
+           (3, 60), (3, 61), (3, 62), (3, 63), (3, 64);     
 
         
 -- Add records to users table
-INSERT INTO users (first_name, last_name, username, password)
-    VALUES  ('James', 'Okeefe', 'James', 'password'),
-            ('Patrik', 'Larsson', 'Patrik', 'password'),
-            ('Davy', 'O Leary-Fraad', 'Davy', 'password'),
-            ('Aran', 'Quintana', 'Aran', 'password');
+INSERT INTO users (id, email, username, profile_pic)
+    VALUES  ("UBxFAkGnd6Yw7tWpjALg0RvKYYp1", 'gdp7@email.com', 'Admin', 'https://firebasestorage.googleapis.com/v0/b/fitness-app-fd0eb.appspot.com/o/images%2FUBxFAkGnd6Yw7tWpjALg0RvKYYp1?alt=media&token=75cbb891-7edc-43d7-ab1b-c8caaa55cb65');
 
 -- Add records to users_workout_program table
 INSERT INTO users_workout_program (user_id, workout_program_id) 
-    VALUES (1,1), (1, 2), (1, 3), (3, 4);
+    VALUES ("UBxFAkGnd6Yw7tWpjALg0RvKYYp1",1), ("UBxFAkGnd6Yw7tWpjALg0RvKYYp1", 2), ("UBxFAkGnd6Yw7tWpjALg0RvKYYp1", 3);
+    
+INSERT INTO user_personal_bests (user_id, bench_press, squats, deadlift) 
+    VALUES ("UBxFAkGnd6Yw7tWpjALg0RvKYYp1","80kg", "130kg", "140kg");

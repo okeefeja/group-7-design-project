@@ -1,17 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { fetchAllWorkoutPrograms, fetchBodyParts, fetchFilteredWorkoutPrograms } from "../../services/API";
+import {
+  fetchAllWorkoutPrograms,
+  fetchBodyParts,
+  fetchFilteredWorkoutPrograms,
+} from "../../services/API";
 import {
   BodyPartList,
   WorkoutProgram,
   WorkoutProgramList,
 } from "../../types/API";
 import CardList from "../../components/CardList/CardList";
-import WorkoutCard from "../../components/WorkoutProgramCard/WorkoutProgramCard";
 import { ScBaseContainer } from "../../components/BaseContainer/BaseContainer.styled";
-import { navigateToWorkoutProgram } from "../../services/navigationUtils";
+import {
+  navigateToAddWorkoutProgram,
+  navigateToWorkoutProgram,
+} from "../../services/navigationUtils";
 import Descriptor from "../../components/Descriptor/Descriptor";
 import Spacer from "../../components/Spacer/Spacer";
 import FilterList from "../../components/FilterList/FilterList";
+import NavigationBar from "../../components/NavigationBar/NavigationBar";
+import { Text, View } from "react-native";
+import TextButton from "../../components/Buttons/TextButton/TextButton";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 interface BrowseProgramScreenProps {
   navigation: any;
@@ -37,7 +47,9 @@ export default function BrowseProgramScreen({
     }
   }
 
-  async function getFilteredWorkoutProgram(filterIds:Array<number>): Promise<void> {
+  async function getFilteredWorkoutProgram(
+    filterIds: Array<number>
+  ): Promise<void> {
     const fetchedWorkoutPrograms: WorkoutProgramList | null =
       await fetchFilteredWorkoutPrograms(filterIds);
 
@@ -81,32 +93,52 @@ export default function BrowseProgramScreen({
     }
   }
 
+  function handleAddProgram() {
+    navigateToAddWorkoutProgram(navigation);
+  }
+
   useEffect(() => {
     getWorkoutProgram();
     getBodyParts();
   }, []);
-
-  //function filterWorkoutProgramsByBodyParts(filteringOptions: string[]) {
-  //  if (workoutPrograms) {
-  //    return [...workoutPrograms].filter((program) =>
-  //      program.body_parts.every((bodyPart) =>
-  //        filteringOptions.includes(bodyPart.name)
-  //      )
-  //    );
-  //  } else {
-  //    return workoutPrograms;
-  //  }
-  //}
 
   return (
     <ScBaseContainer>
       <Descriptor
         title="Workout Programs"
         description="Browse here for your new favorite workout program!"
+        showHeartIcon={false}
+        isLiked={false}
+        toggleLike={function (): void {
+          throw new Error("Function not implemented.");
+        }}
       />
+      <Spacer size={3} orientation="vertical" />
       <FilterList filters={bodyParts} onFilterSelect={handleFilterSelect} />
-      <Spacer size={4} orientation="vertical" />
-      <CardList data={workoutPrograms} action={onPressHandler} />
+      <Spacer size={2} orientation="vertical" />
+      <Text style={{ color: "white", fontSize: 26, fontWeight: "600" }}>
+        Featured workout programs
+      </Text>
+      <TextButton
+        label="+ Add your own workout program"
+        onClick={handleAddProgram}
+      />
+      <Spacer size={2} orientation="vertical" />
+      {workoutPrograms ? (
+        <>
+          <CardList data={workoutPrograms} action={onPressHandler} />
+        </>
+      ) : (
+        <>
+          <Spacer orientation="vertical" size={5} />
+          <LoadingSpinner text="Loading workout programs..." />
+          <Spacer orientation="vertical" size={5} />
+          <Spacer orientation="vertical" size={5} />
+          <Spacer orientation="vertical" size={5} />
+          <Spacer orientation="vertical" size={5} />
+          <Spacer orientation="vertical" size={5} />
+        </>
+      )}
     </ScBaseContainer>
   );
 }

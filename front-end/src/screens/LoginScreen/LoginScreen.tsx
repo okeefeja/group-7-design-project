@@ -1,91 +1,153 @@
 import React, { useEffect, useState } from "react";
-import { ScBaseContainer } from "../../components/BaseContainer/BaseContainer.styled";
+import {
+  ScBaseContainer,
+  ScBaseContainerScroll,
+} from "../../components/BaseContainer/BaseContainer.styled";
 import BigLogo from "../../components/BigLogo/BigLogo";
 import LoginBar from "../../components/LoginBar/LoginBar";
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
-import { signInWithEmailAndPassword, onAuthStateChanged, getAuth } from 'firebase/auth';
-import { signInWithEmail } from "../../../firebaseModel";
+import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
+import { onAuthStateChanged, getAuth } from "firebase/auth";
+import { loginWithEmail, signUpUser } from "../../../firebaseModel";
 import { navigateToBrowseWorkoutPrograms } from "../../services/navigationUtils";
+import SubmitButton from "../../components/Buttons/SubmitButton/SubmitButton";
+import TextButton from "../../components/Buttons/TextButton/TextButton";
+import Spacer from "../../components/Spacer/Spacer";
+import UserInput from "../../components/UserInput/UserInput";
 
 interface LoginScreenProps {
   navigation: any;
 }
 
-const LoginScreen = ({ navigation }:LoginScreenProps) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+const LoginScreen = ({ navigation }: LoginScreenProps) => {
+  // Keeps track of login / sign up mode
+  const [login, setLogin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const auth = getAuth();
 
   const handleLogin = () => {
-    signInWithEmail(username, password);
+    loginWithEmail(email, password, setError);
   };
 
-  const auth = getAuth();
+  const handleSignUp = () => {
+    signUpUser(email, password, username, setError);
+  };
+
+  const handleModeSwitch = () => {
+    setLogin(!login);
+    setEmail("");
+    setPassword("");
+    setUsername("");
+    setError(null);
+  };
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        navigateToBrowseWorkoutPrograms(navigation);    
+        navigateToBrowseWorkoutPrograms(navigation);
       }
-    })
-  });
-
+    });
+  }, [auth]);
   return (
-  <View style={styles.root}>
-    <View style={styles.container}>
-        <Text style={styles.appTitle}>Fitness App</Text>
-        <BigLogo></BigLogo>
-        <LoginBar
-          title="Username"
-          onChangeText={setUsername}
-          value={username}
+    <ScBaseContainerScroll>
+
+      <Spacer orientation="vertical" size={5} />
+      <Text style={styles.appTitle}>Fitness App</Text>
+      <Text
+        style={{
+          color: "white",
+          fontSize: 36,
+          fontWeight: "700",
+          textAlign: "center",
+        }}
+      >
+        {login ? "Login" : "Sign up"}
+      </Text>
+      <Spacer orientation="vertical" size={3} />
+
+      <UserInput
+        title="Email"
+        placeholder="Email"
+        value={email}
+        setValue={setEmail}
+      />
+      {error?.includes("invalid-email") && (
+        <>
+          <Spacer orientation="vertical" size={2} />
+          <Text style={{ color: "#EC2647" }}>Please enter a valid email!</Text>
+        </>
+      )}
+      <Spacer orientation="vertical" size={3} />
+      <UserInput
+        title="Password"
+        placeholder="Password"
+        value={password}
+        setValue={setPassword}
+        password={true}
+      />
+      {error?.includes("missing-password") && (
+        <>
+          <Spacer orientation="vertical" size={2} />
+          <Text style={{ color: "#EC2647" }}>Please enter a password!</Text>
+        </>
+      )}
+      {error?.includes("invalid-credential") && (
+        <>
+          <Spacer orientation="vertical" size={2} />
+          <Text style={{ color: "#EC2647" }}>
+            Wrong email or password! Please try again!
+          </Text>
+        </>
+      )}
+      {!login && (
+        <>
+          <Spacer orientation="vertical" size={3} />
+          <UserInput
+            title="Username"
+            placeholder="Username"
+            value={username}
+            setValue={setUsername}
+          />
+        </>
+      )}
+
+      <Spacer orientation="vertical" size={5} />
+      <SubmitButton
+        label={login ? "Login" : "Sign up"}
+        onClick={login ? handleLogin : handleSignUp}
+        style={{ alignItems: "center" }}
+      />
+      <Spacer orientation="vertical" size={3} />
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
+          marginBottom: 300,
+        }}
+      >
+        <Text style={{ color: "gray", fontSize: 16 }}>
+          {login ? "Don't have an account?" : "Already have an account?"}{" "}
+        </Text>
+        <TextButton
+          label={login ? "Sign up" : "Login"}
+          onClick={handleModeSwitch}
+          bold={true}
         />
-        <LoginBar
-          title="Password"
-          isPassword={true}
-          onChangeText={setPassword}
-          value={password}
-        />
-        {/* <Button title="Login" onPress={handleLogin} /> */}
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
       </View>
-    </View>
+    </ScBaseContainerScroll>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#000', // Background color for the entire screen
-  },
-  container: {
-    padding: 20,
-    marginTop: 50, // Adjust the margin as needed
-  },
   appTitle: {
     fontSize: 50, // Increased font size
-    fontWeight: 'bold', // Bold text
-    color: '#ff6c01', // Orange color to match the login button
-    textAlign: 'center', // Center the text
-    marginBottom: 200, // Add some space below the title
-  },
-  loginButton: {
-    height: 70, // Adjust the size of the circle here
-    width: 150, // Make sure width and height are equal to get a circle
-    backgroundColor: '#ff6c01', // Orange color
-    justifyContent: 'center', // Centers the text vertically
-    alignItems: 'center', // Centers the text horizontally
-    borderRadius: 35, // Half of the height/width to get a perfect circle
-    alignSelf: 'center', // Center the button in the container
-    marginTop: 20, // Add some margin at the top
-  },
-  loginButtonText: {
-    color: '#000', // White text color
-    fontSize: 20, // Adjust text size as needed
-    fontWeight: "bold",
+    fontWeight: "bold", // Bold text
+    color: "#ff8610", // Orange color to match the login button
+    textAlign: "center", // Center the text
+    marginBottom: 100, // Add some space below the title
   },
 });
 

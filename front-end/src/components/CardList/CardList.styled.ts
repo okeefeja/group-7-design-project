@@ -7,7 +7,7 @@ const ScCardListScrollView = styled.ScrollView`
 const ScCardListContainer = styled.View`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 `;
 
 export { ScCardListContainer, ScCardListScrollView };
