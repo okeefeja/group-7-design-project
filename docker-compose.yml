@@ -1,0 +1,29 @@
+version: '3'
+services:
+
+  database:
+    build: ./database
+    restart: always
+    container_name: database
+    environment:
+      MYSQL_DATABASE : 'fitness_app'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports: 
+      - '3306:3306'
+
+#  back-end:
+#    build: ./back-end
+#    container_name: back-end
+#    command: sh -c "sleep 10s ; python3 ./app.py"
+#    ports:
+#      - 5000:5000
+#    depends_on:
+#      - database
+      
+#  front-end: 
+#    build: ./front-end
+#    container_name: front-end
+#    depends_on: 
+#      - back-end
+#    command: sh -c "sleep 20s ; npx expo start"
+

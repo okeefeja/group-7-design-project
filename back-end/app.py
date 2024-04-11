@@ -14,11 +14,7 @@ app = Flask(__name__)
 # and the database username is the default, 'root'
 # change if necessary
 
-# SQLALCHEMY_DATABASE_URI must be set to the string:
-#                               mysql+pymysql://username:password@127.0.0.1/fitness_app
-# where username and password are your mysql username (default: root) and password
-# you can create an environment variable called "DATABASE_URL" or else manually set it
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@127.0.0.1/fitness_app'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 # initialize the app with Flask-SQLAlchemy
@@ -779,4 +775,5 @@ def remove_users(idArray):
     
 
 if __name__ == '__main__':
+        print
         app.run(debug=True, host="0.0.0.0", port="5000")
